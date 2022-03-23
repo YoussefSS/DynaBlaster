@@ -7,6 +7,7 @@
 #include "GameFramework\CharacterMovementComponent.h"
 #include "GameFramework\PlayerController.h"
 #include "EngineUtils.h"
+#include "Components\CapsuleComponent.h"
 
 #include "TopDownCamera.h"
 
@@ -16,6 +17,18 @@ APlayerCharacter::APlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BasicStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BasicStaticMesh"));
+	BasicStaticMesh->SetupAttachment(GetRootComponent());
+
+	BasicStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	BasicStaticMesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	BasicStaticMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+
+	GetCharacterMovement()->MaxStepHeight = 1;
+	GetCharacterMovement()->MaxWalkSpeed = 250;
+
+	GetCapsuleComponent()->SetCapsuleHalfHeight(12);
+	GetCapsuleComponent()->SetCapsuleRadius(12);
 }
 
 // Called when the game starts or when spawned

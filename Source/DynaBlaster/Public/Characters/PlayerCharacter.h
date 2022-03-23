@@ -15,6 +15,9 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UStaticMeshComponent* BasicStaticMesh;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
