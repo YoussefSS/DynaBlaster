@@ -10,8 +10,8 @@ UENUM(BlueprintType)
 enum class ETileType : uint8
 {
 	ETT_Empty					UMETA(DisplayName = "Empty"),
-	ETT_IndestructableWall		UMETA(DisplayName = "IndestructableWall"),
-	ETT_DestructableWall		UMETA(DisplayName = "DestructableWall"),
+	ETT_IndestructibleWall		UMETA(DisplayName = "IndestructibleWall"),
+	ETT_DestructibleWall		UMETA(DisplayName = "DestructibleWall"),
 
 	EMS_MAX						UMETA(DisplayName = "DefaultMAX")
 };
@@ -29,7 +29,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void InitializeMap();
+	void InitializeVirtualMap();
+
+	void GenerateMap();
 
 public:	
 	// Called every frame
@@ -40,13 +42,33 @@ public:
 	FORCEINLINE int32 GetMapWidth() { return MapWidth + 2; }
 	FORCEINLINE int32 GetMapHeight() { return MapHeight + 2; }
 
+public:
+
+	UPROPERTY(EditDefaultsOnly, Category = "Map Generation")
+	TSubclassOf<AActor> IndestrucibleWallClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Map Generation")
+	TSubclassOf<AActor> DestructibleWallClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Map Generation")
+	TSubclassOf<AActor> FloorClass;
+
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
-	int32 MapWidth;
+	int32 MapWidth = 9;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
-	int32 MapHeight;
+	int32 MapHeight = 9;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
+	int32 TileWorldSize = 25;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
+	int32 ZSpawnLocation = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
+	int32 FloorSpawnZOffset = 10;
 
 	TMap<FVector2D, ETileType> TilesMap;
 
