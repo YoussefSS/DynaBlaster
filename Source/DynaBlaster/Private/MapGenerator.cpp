@@ -37,27 +37,36 @@ void AMapGenerator::InitializeVirtualMap()
 	{
 		for (int32 j = 0; j < GetMapHeight(); j++)
 		{
-			if (i == 0 || i == GetMapWidth() - 1 || j == 0 || j == GetMapHeight() - 1 // outer Edges
-				|| (i % 2 == 0 && j % 2 == 0) ) // indestructible wall every other tile
-			{
-				TilesMap.Add(FVector2D(i, j), ETileType::ETT_IndestructibleWall);
-			}
-			else
-			{
-				TilesMap.Add(FVector2D(i, j), ETileType::ETT_Empty);
-			}
-			
+			InitializeTileAt(i, j);
 		}
-
 	}
-
-	// Generate indestructible walls
-	
-	// Generate destructible walls
 
 	// ?? Generate AI positions ??
 
 	return;
+}
+
+void AMapGenerator::InitializeTileAt(const int32& i, const int32& j)
+{
+	if (i == 0 || i == GetMapWidth() - 1 || j == 0 || j == GetMapHeight() - 1 // outer Edges
+		|| (i % 2 == 0 && j % 2 == 0)) // indestructible wall every other tile
+	{
+		TilesMap.Add(FVector2D(i, j), ETileType::ETT_IndestructibleWall);
+	}
+	else // Anything that is not an indestructible wall
+	{
+		float randomDestructibleChance = FMath::FRand();
+
+		if (randomDestructibleChance > DestructibleWallSpawnChance // Empty wall
+			|| (i == 1 && j == 1) || (i == 2 && j == 1) || (i == 1 && j == 2)) // Do not spawn walls in (1,1) , (2,1) , (1,2) , so that the player has an area to move in
+		{
+			TilesMap.Add(FVector2D(i, j), ETileType::ETT_Empty);
+		}
+		else // Destructible wall
+		{
+			TilesMap.Add(FVector2D(i, j), ETileType::ETT_DestructibleWall);
+		}
+	}
 }
 
 
@@ -86,7 +95,7 @@ void AMapGenerator::GenerateMap()
 				}
 				case ETileType::ETT_DestructibleWall: 
 				{
-					// Spawn destructible wall
+					AActor* Actor = World->SpawnActor<AActor>(DestructibleWallClass, SpawnLocation, FRotator(0.f));
 					break;
 				}
 				default: 
@@ -98,10 +107,17 @@ void AMapGenerator::GenerateMap()
 		}
 	}
 
-	// Spawn floor
-	FVector SpawnLocation = FVector(TileWorldSize * GetMapWidth() / 2 - TileWorldSize/2, TileWorldSize * GetMapHeight() / 2 - TileWorldSize/2, ZSpawnLocation - TileWorldSize/2 - FloorSpawnZOffset);
+	SpawnFloor();
+}
+
+void AMapGenerator::SpawnFloor()
+{
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	FVector SpawnLocation = FVector(TileWorldSize * GetMapWidth() / 2 - TileWorldSize / 2, TileWorldSize * GetMapHeight() / 2 - TileWorldSize / 2, ZSpawnLocation - TileWorldSize / 2 - FloorSpawnZOffset);
 	AActor* Actor = World->SpawnActor<AActor>(FloorClass, SpawnLocation, FRotator(0.f));
-	Actor->SetActorScale3D(FVector(TileWorldSize * GetMapWidth() , TileWorldSize * GetMapHeight(), FloorSpawnZOffset));
+	Actor->SetActorScale3D(FVector(TileWorldSize * GetMapWidth(), TileWorldSize * GetMapHeight(), FloorSpawnZOffset));
 }
 
 void AMapGenerator::PrintMap()

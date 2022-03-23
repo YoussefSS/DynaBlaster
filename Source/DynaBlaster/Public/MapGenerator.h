@@ -31,7 +31,11 @@ protected:
 
 	void InitializeVirtualMap();
 
+	void InitializeTileAt(const int32& i, const int32& j);
+
 	void GenerateMap();
+
+	void SpawnFloor();
 
 public:	
 	// Called every frame
@@ -69,6 +73,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
 	int32 FloorSpawnZOffset = 10;
+
+	/** 0 means will never spawn, 1 means will always spawn */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation | Probability", meta = (ClampMin = "0", ClampMax = "1"))
+	float DestructibleWallSpawnChance = 0.5;
+
 
 	TMap<FVector2D, ETileType> TilesMap;
 
