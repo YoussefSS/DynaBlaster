@@ -5,7 +5,9 @@
 
 #include "Components\BoxComponent.h"
 #include "TimerManager.h"
+#include "DrawDebugHelpers.h"
 
+#include "DynaBlaster/Public/Interfaces\Hittable.h"
 // Sets default values
 ABomb::ABomb()
 {
@@ -37,15 +39,40 @@ void ABomb::BeginPlay()
 
 void ABomb::Explode()
 {
-	if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Cyan, FString::Printf(TEXT("exploded"))); }
-
 	// Play visual effect
 
-	// Destroy adjacent tiles, only destroy the first tile you touch
-
+	// Destroy adjacent tiles
+	ExplodeOnTraceAxis(GetActorForwardVector());
+	ExplodeOnTraceAxis(-GetActorForwardVector());
+	ExplodeOnTraceAxis(GetActorRightVector());
+	ExplodeOnTraceAxis(-GetActorRightVector());
 
 	OnBombExploded.Broadcast();
 	Destroy();
+}
+
+void ABomb::ExplodeOnTraceAxis(FVector AxisToTraceOn)
+{
+	FVector TraceEnd = GetActorLocation();
+	if (!bIsUpgraded)
+		TraceEnd += AxisToTraceOn * TraceLength;
+	else
+		TraceEnd += AxisToTraceOn * UpgradedTraceLength;
+	
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	FHitResult Hit;
+	if (GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), TraceEnd, ECC_Visibility, QueryParams)) // Single as we only need to destroy the first hittable we touch
+	{
+		IHittable* Hittable = Cast<IHittable>(Hit.Actor);
+		if (Hittable)
+		{
+			Hittable->Hit(this);
+		}
+	}
+
+	DrawDebugLine(GetWorld(), GetActorLocation(), TraceEnd, FColor::Blue, false, 3, 0, 3);
 }
 
 // Called every frame

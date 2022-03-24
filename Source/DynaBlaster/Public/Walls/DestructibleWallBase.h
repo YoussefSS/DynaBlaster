@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DynaBlaster/Public/Interfaces\Hittable.h"
 #include "DestructibleWallBase.generated.h"
 
 UCLASS()
-class DYNABLASTER_API ADestructibleWallBase : public AActor
+class DYNABLASTER_API ADestructibleWallBase : public AActor, public IHittable
 {
 	GENERATED_BODY()
 	
@@ -48,5 +49,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void Hit(AActor* OtherActor) override;
 
 };

@@ -46,3 +46,10 @@ void ADestructibleWallBase::Tick(float DeltaTime)
 
 }
 
+void ADestructibleWallBase::Hit(AActor* OtherActor)
+{
+	// Destroy
+
+	Destroy();
+}
+

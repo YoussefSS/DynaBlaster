@@ -33,10 +33,21 @@ protected:
 
 	void Explode();
 
+	void ExplodeOnTraceAxis(FVector AxisToTraceOn);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bomb | Parameters")
 	float TimeToExplode = 3;
 
 	FTimerHandle BombTimer;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Bomb | Parameters")
+	float TraceLength = 30;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Bomb | Parameters")
+	float UpgradedTraceLength = 55;
+
+	UPROPERTY(VisibleInstanceOnly, Category = "Bomb")
+	bool bIsUpgraded = false;
 
 public:	
 	// Called every frame

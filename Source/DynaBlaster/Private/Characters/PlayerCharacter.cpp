@@ -24,12 +24,14 @@ APlayerCharacter::APlayerCharacter()
 	BasicStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BasicStaticMesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	BasicStaticMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	//BasicStaticMesh->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
 
 	GetCharacterMovement()->MaxStepHeight = 1;
 	GetCharacterMovement()->MaxWalkSpeed = 120;
 
 	GetCapsuleComponent()->SetCapsuleHalfHeight(12);
 	GetCapsuleComponent()->SetCapsuleRadius(12);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
 }
 
 // Called when the game starts or when spawned
@@ -64,6 +66,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
 
 	PlayerInputComponent->BindAction("SpawnBomb", EInputEvent::IE_Pressed, this, &APlayerCharacter::SpawnBomb);
+}
+
+void APlayerCharacter::Hit(AActor* OtherActor)
+{
+	if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Cyan, FString::Printf(TEXT("Player Hit"))); }
 }
 
 void APlayerCharacter::MoveForward(float Value)

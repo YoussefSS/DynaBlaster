@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "DynaBlaster/Public/Interfaces\Hittable.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class DYNABLASTER_API APlayerCharacter : public ACharacter
+class DYNABLASTER_API APlayerCharacter : public ACharacter, public IHittable
 {
 	GENERATED_BODY()
 
@@ -34,6 +35,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void Hit(AActor* OtherActor) override;
 
 private:
 
