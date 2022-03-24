@@ -27,7 +27,7 @@ protected:
 
 	void ExplodeOnTraceAxis(FVector AxisToTraceOn);
 
-	void SpawnExplosionParticleAt(FVector SpawnLocation);
+	void SpawnBombTraceAt(FVector SpawnLocation);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bomb|Parameters")
 	float TimeToExplode = 3;
@@ -43,8 +43,9 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, Category = "Bomb")
 	bool bIsUpgraded = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bomb")
-	UParticleSystem* ExplosionParticle;
+	UPROPERTY(EditDefaultsOnly, Category = "Bomb|Bomb Trace")
+	TSubclassOf<class ABombTrace> BombTraceClass;
+	
 
 public:	
 	// Called every frame

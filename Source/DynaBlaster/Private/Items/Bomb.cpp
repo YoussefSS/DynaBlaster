@@ -9,6 +9,7 @@
 #include "Kismet\GameplayStatics.h"
 
 #include "DynaBlaster/Public/Interfaces\Hittable.h"
+#include "DynaBlaster/Public/Items/BombTrace.h"
 // Sets default values
 ABomb::ABomb()
 {
@@ -37,7 +38,7 @@ void ABomb::Explode()
 	ExplodeOnTraceAxis(-GetActorRightVector());
 
 	
-	SpawnExplosionParticleAt(GetActorLocation());
+	SpawnBombTraceAt(GetActorLocation());
 
 	OnBombExploded.Broadcast();
 	Destroy();
@@ -58,8 +59,8 @@ void ABomb::ExplodeOnTraceAxis(FVector AxisToTraceOn)
 	{
 		FinalTraceEnd = TraceEndUpgraded;
 	}
-		
-	
+
+	// LineTrace
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 
@@ -83,38 +84,32 @@ void ABomb::ExplodeOnTraceAxis(FVector AxisToTraceOn)
 
 		if (!bCloseRangeHit)
 		{
-			SpawnExplosionParticleAt(TraceEndRegular);
+			SpawnBombTraceAt(TraceEndRegular);
 		}
 	}
 	else
 	{
 		if (!bIsUpgraded)
 		{
-			SpawnExplosionParticleAt(TraceEndRegular);
+			SpawnBombTraceAt(TraceEndRegular);
 		}
 		else
 		{
-			SpawnExplosionParticleAt(TraceEndRegular);
-			SpawnExplosionParticleAt(TraceEndUpgraded);
-			
+			SpawnBombTraceAt(TraceEndRegular);
+			SpawnBombTraceAt(TraceEndUpgraded);
 		}
 			
 	}
 
-	
-
 	//DrawDebugLine(GetWorld(), GetActorLocation(), FinalTraceEnd, FColor::Blue, false, 3, 0, 3);
 }
 
-void ABomb::SpawnExplosionParticleAt(FVector SpawnLocation)
+void ABomb::SpawnBombTraceAt(FVector SpawnLocation)
 {
-	//if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Cyan, FString::Printf(TEXT("spawn loc: %s"), *SpawnLocation.ToString())); }
-
-	if (ExplosionParticle)
+	UWorld* World = GetWorld();
+	if (BombTraceClass && World)
 	{
-		FVector ParticleSpawnLocation = SpawnLocation - GetActorForwardVector() * 50; // Offset because this specific particle system doesn't spawn where it should
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionParticle, ParticleSpawnLocation, FRotator(0.f), FVector(0.1), false);
-		//DrawDebugSphere(GetWorld(), SpawnLocation, 25, 8, FColor::Red, false, 2);
+		ABombTrace* Actor = World->SpawnActor<ABombTrace>(BombTraceClass, SpawnLocation, FRotator(0.f));
 	}
 }
 
