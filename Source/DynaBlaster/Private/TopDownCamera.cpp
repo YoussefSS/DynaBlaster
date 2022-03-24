@@ -3,3 +3,12 @@
 
 #include "TopDownCamera.h"
 
+
+
+
+void ATopDownCamera::BeginPlay()
+{
+	Super::BeginPlay();
+
+	FadeIn();
+}

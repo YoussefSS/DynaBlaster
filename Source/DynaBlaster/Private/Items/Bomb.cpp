@@ -79,6 +79,11 @@ void ABomb::ExplodeOnTraceAxis(FVector AxisToTraceOn)
 		IHittable* Hittable = Cast<IHittable>(Hit.Actor);
 		if (Hittable)
 		{
+			APawn* Pawn = Cast<APawn>(Hittable);
+			if (Pawn) // Still spawn a trace if the hittable is a pawn
+			{
+				SpawnBombTraceAt(TraceEndRegular);
+			}
 			Hittable->Hit(this);
 		}
 

@@ -14,4 +14,17 @@ class DYNABLASTER_API ATopDownCamera : public ACameraActor
 {
 	GENERATED_BODY()
 	
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:
+
+	/** From from black to transparent, implemented in blueprints */
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void FadeIn();
+
+	/** From transparent to black, implemented in blueprints */
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void FadeOut();
 };

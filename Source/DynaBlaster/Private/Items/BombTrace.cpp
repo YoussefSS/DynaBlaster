@@ -57,7 +57,7 @@ void ABombTrace::PlayExplosionParticle()
 
 void ABombTrace::RemoveTrace()
 {
-	if (CurrentActivePSC)
+	if (bDisableEmitterOnRemoveTrace && CurrentActivePSC)
 	{
 		CurrentActivePSC->DeactivateImmediate();
 	}

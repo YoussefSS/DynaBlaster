@@ -72,7 +72,16 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Hit(AActor* OtherActor)
 {
-	if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Cyan, FString::Printf(TEXT("Player Hit"))); }
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC)
+	{
+		DisableInput(PC);
+	}
+
+	if (GetDynaBlasterGameModeBase())
+	{
+		GetDynaBlasterGameModeBase()->RestartLevel();
+	}
 }
 
 void APlayerCharacter::MoveForward(float Value)

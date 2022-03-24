@@ -39,10 +39,12 @@ public:
 	/** How long should this actor stay in the scene
 	This should be the same time as the explosion visual effect */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bomb Trace")
-	float TraceLifetime = 1.5;
+	float TraceLifetime = 1.3;
 
 	void RemoveTrace();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bomb Trace")
+	bool bDisableEmitterOnRemoveTrace = false;
 private:
 
 	class UParticleSystemComponent* CurrentActivePSC;

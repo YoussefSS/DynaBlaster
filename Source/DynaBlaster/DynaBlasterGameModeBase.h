@@ -25,7 +25,15 @@ public:
 
 	FVector GetLocationOnTileMap(FVector InLocation);
 
-private:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "DynaBlaster")
+	void RestartLevel();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "DynaBlaster")
+	class ATopDownCamera* GetTopDownCamera();
+
+public:
+
+	ATopDownCamera* Cam;
 
 	AMapGenerator* MapGenerator;
 };

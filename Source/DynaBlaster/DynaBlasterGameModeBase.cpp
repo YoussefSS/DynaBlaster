@@ -6,6 +6,7 @@
 #include "EngineUtils.h"
 
 #include "MapGenerator.h"
+#include "TopDownCamera.h"
 
 void ADynaBlasterGameModeBase::BeginPlay()
 {
@@ -39,5 +40,20 @@ FVector ADynaBlasterGameModeBase::GetLocationOnTileMap(FVector InLocation)
 	InLocation.Y = FMath::RoundToFloat(InLocation.Y / TileWorldSize) * TileWorldSize;
 
 	return InLocation;
+}
+
+ATopDownCamera* ADynaBlasterGameModeBase::GetTopDownCamera()
+{
+	if (Cam) return Cam;
+
+	UWorld* World = GetWorld();
+	if (!World) return Cam;
+
+	for (TActorIterator<ATopDownCamera> CameraItr(World); CameraItr; ++CameraItr)
+	{
+		Cam = *CameraItr;
+	}
+
+	return Cam;
 }
 
