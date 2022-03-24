@@ -46,6 +46,8 @@ public:
 	FORCEINLINE int32 GetMapWidth() { return MapWidth + 2; }
 	FORCEINLINE int32 GetMapHeight() { return MapHeight + 2; }
 
+	FORCEINLINE int32 GetTileWorldSize() { return TileWorldSize; }
+
 public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Map Generation")

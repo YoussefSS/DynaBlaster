@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "DynaBlasterGameModeBase.generated.h"
 
+class AMapGenerator;
 /**
  * 
  */
@@ -14,4 +15,17 @@ class DYNABLASTER_API ADynaBlasterGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:
+
+	AMapGenerator* GetMapGenerator();
+
+	FVector GetLocationOnTileMap(FVector InLocation);
+
+private:
+
+	AMapGenerator* MapGenerator;
 };

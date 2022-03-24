@@ -19,6 +19,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* RootComp;
+
 	UPROPERTY(VisibleAnywhere, Category = "Bomb Trace")
 	class UBoxComponent* BoxComponent;
 

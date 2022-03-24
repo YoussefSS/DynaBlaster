@@ -8,9 +8,11 @@
 #include "GameFramework\PlayerController.h"
 #include "EngineUtils.h"
 #include "Components\CapsuleComponent.h"
+#include "Kismet\GameplayStatics.h"
 
 #include "TopDownCamera.h"
 #include "Items\Bomb.h"
+#include "DynaBlaster/DynaBlasterGameModeBase.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -91,8 +93,12 @@ void APlayerCharacter::SpawnBomb()
 	UWorld* World = GetWorld();
 	if (!World) return;
 	
-	
-	FVector SpawnLocation = GetActorLocation(); // TODO: Adjust to be placed on a tile
+	FVector SpawnLocation = GetActorLocation();
+	if (GetDynaBlasterGameModeBase())
+	{
+		SpawnLocation = GetDynaBlasterGameModeBase()->GetLocationOnTileMap(SpawnLocation);
+	}
+
 	NumBombs--;
 	ABomb* Actor = World->SpawnActor<ABomb>(BombClass, SpawnLocation, FRotator(0.f));
 
@@ -104,5 +110,15 @@ void APlayerCharacter::SpawnBomb()
 void APlayerCharacter::OnBombExploded()
 {
 	NumBombs++;
+}
+
+ADynaBlasterGameModeBase* APlayerCharacter::GetDynaBlasterGameModeBase()
+{
+	if (DynaBlasterGameMode) return DynaBlasterGameMode;
+
+	DynaBlasterGameMode = Cast<ADynaBlasterGameModeBase>(UGameplayStatics::GetGameMode(this));
+
+	return DynaBlasterGameMode;
+
 }
 

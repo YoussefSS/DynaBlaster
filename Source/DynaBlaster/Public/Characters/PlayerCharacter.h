@@ -48,4 +48,10 @@ private:
 
 	UFUNCTION()
 	void OnBombExploded();
+
+	class ADynaBlasterGameModeBase* DynaBlasterGameMode;
+
+	ADynaBlasterGameModeBase* GetDynaBlasterGameModeBase();
+
+
 };
