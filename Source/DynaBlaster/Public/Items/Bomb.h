@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DynaBlaster/Public/Items/TileItemBase.h"
 #include "Bomb.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBombExploded);
 
 UCLASS()
-class DYNABLASTER_API ABomb : public AActor
+class DYNABLASTER_API ABomb : public ATileItemBase
 {
 	GENERATED_BODY()
 	
@@ -17,15 +18,6 @@ public:
 	// Sets default values for this actor's properties
 	ABomb();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Bomb")
-	class USceneComponent* RootComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Bomb")
-	class UStaticMeshComponent* Mesh;
-
-	/** Handling collision with a box component instead of the mesh */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Bomb")
-	class UBoxComponent* BoxComponent;
 
 protected:
 	// Called when the game starts or when spawned
@@ -35,19 +27,24 @@ protected:
 
 	void ExplodeOnTraceAxis(FVector AxisToTraceOn);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bomb | Parameters")
+	void SpawnExplosionParticleAt(FVector SpawnLocation);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bomb|Parameters")
 	float TimeToExplode = 3;
 
 	FTimerHandle BombTimer;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Bomb | Parameters")
-	float TraceLength = 30;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Bomb|Parameters")
+	float TraceLengthRegular = 25;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Bomb | Parameters")
-	float UpgradedTraceLength = 55;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Bomb|Parameters")
+	float TraceLengthUpgraded = 50;
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Bomb")
 	bool bIsUpgraded = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bomb")
+	UParticleSystem* ExplosionParticle;
 
 public:	
 	// Called every frame

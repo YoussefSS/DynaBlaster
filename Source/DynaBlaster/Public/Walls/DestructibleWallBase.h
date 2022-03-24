@@ -5,26 +5,17 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "DynaBlaster/Public/Interfaces\Hittable.h"
+#include "DynaBlaster/Public/Items/TileItemBase.h"
 #include "DestructibleWallBase.generated.h"
 
 UCLASS()
-class DYNABLASTER_API ADestructibleWallBase : public AActor, public IHittable
+class DYNABLASTER_API ADestructibleWallBase : public ATileItemBase, public IHittable
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
 	ADestructibleWallBase();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Wall")
-	class USceneComponent* RootComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Wall")
-	class UStaticMeshComponent* Mesh;
-
-	/** Handling collision with a box component instead of the mesh */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Wall")
-	class UBoxComponent* BoxComponent;
 
 protected:
 	// Called when the game starts or when spawned
@@ -35,16 +26,17 @@ protected:
 	/** Spawn something on destroyed */
 
 	/** Spawn powerup or goal */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wall | Destruct")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wall|Destruct")
 	bool bSpawnItemOnDestroy = false;
 
-	UPROPERTY(EditAnywhere, Category = "Wall | Destruct")
+	UPROPERTY(EditAnywhere, Category = "Wall|Destruct")
 	TSubclassOf<AActor> ItemToSpawnOnDestroy;
 
 	UFUNCTION()
 	void OnWallDestroyed(AActor* DestroyedActor);
 
 	/** End spawn something on destroyed */
+
 
 public:	
 	// Called every frame
