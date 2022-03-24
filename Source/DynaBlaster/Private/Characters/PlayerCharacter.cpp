@@ -10,6 +10,7 @@
 #include "Components\CapsuleComponent.h"
 
 #include "TopDownCamera.h"
+#include "Items\Bomb.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -25,7 +26,7 @@ APlayerCharacter::APlayerCharacter()
 	BasicStaticMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 
 	GetCharacterMovement()->MaxStepHeight = 1;
-	GetCharacterMovement()->MaxWalkSpeed = 250;
+	GetCharacterMovement()->MaxWalkSpeed = 120;
 
 	GetCapsuleComponent()->SetCapsuleHalfHeight(12);
 	GetCapsuleComponent()->SetCapsuleRadius(12);
@@ -61,6 +62,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
+
+	PlayerInputComponent->BindAction("SpawnBomb", EInputEvent::IE_Pressed, this, &APlayerCharacter::SpawnBomb);
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -71,5 +74,28 @@ void APlayerCharacter::MoveForward(float Value)
 void APlayerCharacter::MoveRight(float Value)
 {
 	GetCharacterMovement()->AddInputVector(FVector(0, Value, 0));
+}
+
+void APlayerCharacter::SpawnBomb()
+{
+	if (!ensureMsgf(BombClass != nullptr, TEXT("BombClass not set"))) return;
+	if (NumBombs <= 0) return;
+
+	UWorld* World = GetWorld();
+	if (!World) return;
+	
+	
+	FVector SpawnLocation = GetActorLocation(); // TODO: Adjust to be placed on a tile
+	NumBombs--;
+	ABomb* Actor = World->SpawnActor<ABomb>(BombClass, SpawnLocation, FRotator(0.f));
+
+	Actor->OnBombExploded.AddDynamic(this, &APlayerCharacter::OnBombExploded);
+
+
+}
+
+void APlayerCharacter::OnBombExploded()
+{
+	NumBombs++;
 }
 

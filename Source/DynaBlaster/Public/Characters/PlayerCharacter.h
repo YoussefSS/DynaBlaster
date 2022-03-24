@@ -22,6 +22,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Player | Bomb")
+	TSubclassOf<class ABomb> BombClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player | Bomb", meta = (ClampMin = "0"))
+	int32 NumBombs = 1;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -34,4 +40,9 @@ private:
 	void MoveForward(float Value);
 
 	void MoveRight(float Value);
+
+	void SpawnBomb();
+
+	UFUNCTION()
+	void OnBombExploded();
 };
