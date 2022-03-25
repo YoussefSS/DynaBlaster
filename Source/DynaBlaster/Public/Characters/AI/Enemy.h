@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "DynaBlaster/Public/Characters/DynaCharacter.h"
+#include "DynaBlaster/Public/Interfaces\Hittable.h"
 #include "Enemy.generated.h"
 
 UCLASS()
-class DYNABLASTER_API AEnemy : public ADynaCharacter
+class DYNABLASTER_API AEnemy : public ADynaCharacter, public IHittable
 {
 	GENERATED_BODY()
 
@@ -27,4 +28,23 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void Hit(AActor* OtherActor) override;
+
+protected:
+
+	FVector ChooseNewRandomDirection();
+
+	FVector CurrentDirection;
+
+	/** Returns true if the trace hits something in the current direction */
+	bool TraceInCurrentDirection();
+
+	/** How many times should a trace be done this frame in case a new direction is not found
+	* Useful so that the enemy doesn't get stuck for a while looking for a new direction */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
+	int32 TraceAttemptsPerFrame = 5;
+
+private:
+
+	int32 CurrentTraceAttempts = 0;
 };
