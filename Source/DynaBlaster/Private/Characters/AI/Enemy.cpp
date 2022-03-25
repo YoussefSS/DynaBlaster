@@ -7,6 +7,8 @@
 #include "Components\CapsuleComponent.h"
 #include "DrawDebugHelpers.h"
 
+#include "DynaBlaster\Public\Characters\PlayerCharacter.h"
+
 // Sets default values
 AEnemy::AEnemy()
 {
@@ -14,6 +16,9 @@ AEnemy::AEnemy()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCharacterMovement()->MaxWalkSpeed = 30;
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	
 }
 
 // Called when the game starts or when spawned
@@ -24,6 +29,8 @@ void AEnemy::BeginPlay()
 	SpawnDefaultController();
 	ChooseNewRandomDirection();
 
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnCapsuleBeginOverlap);
+
  }
 
 // Called every frame
@@ -31,18 +38,11 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
-
 	GetCharacterMovement()->AddInputVector(CurrentDirection);
 
-
 	while (CurrentTraceAttempts++ < TraceAttemptsPerFrame && TraceInCurrentDirection())
-	{
 		ChooseNewRandomDirection();
-	}
 	CurrentTraceAttempts = 0;
-
-	//DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + CurrentDirection * 25, FColor::Blue, false, 0, 0, 5);
 }
 
 // Called to bind functionality to input
@@ -78,10 +78,23 @@ bool AEnemy::TraceInCurrentDirection()
 	FHitResult Hit;
 	if (GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), TraceEnd, ECC_Visibility, QueryParams))
 	{
-		return true;
+		if ((&Hit.Actor) && Hit.Actor->IsA<ADynaCharacter>()) // Don't change direction if traced another character
+			return false;
+		else
+			return true;
+		
 	}
-	DrawDebugLine(GetWorld(), GetActorLocation(), TraceEnd, FColor::Blue, false, 0, 0, 1);
+	//DrawDebugLine(GetWorld(), GetActorLocation(), TraceEnd, FColor::Blue, false, 0, 0, 1);
 
 	return false;
+}
+
+void AEnemy::OnCapsuleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APlayerCharacter* PlayerChar = Cast<APlayerCharacter>(OtherActor);
+	if (PlayerChar)
+	{
+		PlayerChar->Hit(this);
+	}
 }
 
