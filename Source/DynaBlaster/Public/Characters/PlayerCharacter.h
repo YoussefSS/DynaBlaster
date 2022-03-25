@@ -5,19 +5,17 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "DynaBlaster/Public/Interfaces\Hittable.h"
+#include "DynaBlaster/Public/Characters/DynaCharacter.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class DYNABLASTER_API APlayerCharacter : public ACharacter, public IHittable
+class DYNABLASTER_API APlayerCharacter : public ADynaCharacter, public IHittable
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UStaticMeshComponent* BasicStaticMesh;
 
 protected:
 	// Called when the game starts or when spawned

@@ -12,6 +12,7 @@ enum class ETileType : uint8
 	ETT_Empty					UMETA(DisplayName = "Empty"),
 	ETT_IndestructibleWall		UMETA(DisplayName = "IndestructibleWall"),
 	ETT_DestructibleWall		UMETA(DisplayName = "DestructibleWall"),
+	ETT_Enemy					UMETA(DisplayName = "Enemy"),
 
 	EMS_MAX						UMETA(DisplayName = "DefaultMAX")
 };
@@ -48,6 +49,10 @@ public:
 
 	FORCEINLINE int32 GetTileWorldSize() { return TileWorldSize; }
 
+protected:
+
+	void SetTileToEmptyIfDestructibleWall(int32 i, int32 j);
+
 public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Map Generation")
@@ -57,31 +62,42 @@ public:
 	TSubclassOf<AActor> DestructibleWallClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Map Generation")
+	TSubclassOf<AActor> EnemyClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Map Generation")
 	TSubclassOf<AActor> FloorClass;
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
-	int32 MapWidth = 9;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation", meta = (ClampMin = "5"))
+	int32 MapWidth = 11;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
-	int32 MapHeight = 9;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation", meta = (ClampMin = "5"))
+	int32 MapHeight = 11;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
 	int32 TileWorldSize = 25;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
+	int32 EnemyCount = 3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation| Settings")
 	int32 ZSpawnLocation = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation| Settings")
 	int32 FloorSpawnZOffset = 10;
 
 	/** 0 means will never spawn, 1 means will always spawn */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation | Probability", meta = (ClampMin = "0", ClampMax = "1"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation| Probability", meta = (ClampMin = "0", ClampMax = "1"))
 	float DestructibleWallSpawnChance = 0.5;
 
 
 	TMap<FVector2D, ETileType> TilesMap;
 
-	//TArray<FMy2DArray> TilesArray;
+	TMap<FVector2D, ETileType> EmptyTilesMap;
+
+private:
+
+	int32 EmptyTilesCount = 0;
+	int32 DestructibleWallCount = 0;
 };

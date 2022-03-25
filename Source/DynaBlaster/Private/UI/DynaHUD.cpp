@@ -21,7 +21,7 @@ void UDynaHUD::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	SetMaxGameTime(5);
+	SetMaxGameTime(MaxGameTime);
 }
 
 void UDynaHUD::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
