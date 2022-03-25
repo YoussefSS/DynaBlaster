@@ -38,6 +38,8 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bIsDying) return;
+
 	GetCharacterMovement()->AddInputVector(CurrentDirection);
 
 	while (CurrentTraceAttempts++ < TraceAttemptsPerFrame && TraceInCurrentDirection())
@@ -54,7 +56,9 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::Hit(AActor* OtherActor)
 {
-	if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Cyan, FString::Printf(TEXT("enemy hit"))); }
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AEnemy::DestroyHelper, TimeToDie);
+	bIsDying = true;
+	GetCharacterMovement()->StopMovementImmediately();
 }
 
 FVector AEnemy::ChooseNewRandomDirection()
@@ -96,5 +100,10 @@ void AEnemy::OnCapsuleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	{
 		PlayerChar->Hit(this);
 	}
+}
+
+void AEnemy::DestroyHelper()
+{
+	Destroy();
 }
 

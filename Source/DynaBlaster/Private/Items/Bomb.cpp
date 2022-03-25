@@ -7,6 +7,7 @@
 #include "TimerManager.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet\GameplayStatics.h"
+#include "Components\BoxComponent.h"
 
 #include "DynaBlaster/Public/Interfaces\Hittable.h"
 #include "DynaBlaster/Public/Items/BombTrace.h"
@@ -16,6 +17,8 @@ ABomb::ABomb()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	BoxComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
 // Called when the game starts or when spawned

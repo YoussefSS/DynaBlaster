@@ -47,7 +47,16 @@ protected:
 	UFUNCTION()
 	void OnCapsuleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	void DestroyHelper();
+
+	FTimerHandle DeathTimerHandle;
+
+	/** How long before this enemy is destroyed */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
+	float TimeToDie = 1.2;
 private:
 
 	int32 CurrentTraceAttempts = 0;
+
+	bool bIsDying = false;
 };
