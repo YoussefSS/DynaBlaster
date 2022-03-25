@@ -26,4 +26,6 @@ public:
 	/** NOT BLUEPRINTABLE */
 
 	virtual void Hit(AActor* OtherActor) {};
+
+	virtual void DestroyHelper() {};
 };

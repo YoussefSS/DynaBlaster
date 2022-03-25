@@ -58,6 +58,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Hit(AActor* OtherActor)
 {
+	if (DeathMaterial)
+	{
+		BasicStaticMesh->SetMaterial(0, DeathMaterial);
+	}
+
 	APlayerController* PC = Cast<APlayerController>(GetController());
 	if (PC)
 	{

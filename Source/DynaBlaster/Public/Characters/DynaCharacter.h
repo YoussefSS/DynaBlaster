@@ -18,11 +18,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* BasicStaticMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UMaterialInstance* DeathMaterial;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void Die() {}
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

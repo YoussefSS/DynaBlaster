@@ -30,6 +30,8 @@ public:
 
 	virtual void Hit(AActor* OtherActor) override;
 
+	virtual void DestroyHelper() override;
+
 protected:
 
 	FVector ChooseNewRandomDirection();
@@ -46,8 +48,6 @@ protected:
 
 	UFUNCTION()
 	void OnCapsuleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	void DestroyHelper();
 
 	FTimerHandle DeathTimerHandle;
 

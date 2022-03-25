@@ -36,6 +36,10 @@ public:
 
 	virtual void Hit(AActor* OtherActor) override;
 
+protected:
+
+	virtual void DestroyHelper() override {}
+
 private:
 
 	void MoveForward(float Value);

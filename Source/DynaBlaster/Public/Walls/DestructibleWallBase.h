@@ -17,6 +17,9 @@ public:
 	// Sets default values for this actor's properties
 	ADestructibleWallBase();
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UMaterialInstance* HitMaterial;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -38,10 +41,21 @@ protected:
 	/** End spawn something on destroyed */
 
 
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Hit(AActor* OtherActor) override;
+
+	virtual void DestroyHelper() override;
+
+protected:
+
+	FTimerHandle HitTimerHandle;
+
+	/** How long before this wall is destroyed */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
+	float TimeToDestroy = 1.2;
 
 };

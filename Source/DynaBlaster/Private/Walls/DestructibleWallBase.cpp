@@ -36,7 +36,16 @@ void ADestructibleWallBase::Tick(float DeltaTime)
 
 void ADestructibleWallBase::Hit(AActor* OtherActor)
 {
+	if (HitMaterial)
+	{
+		Mesh->SetMaterial(0, HitMaterial);
+	}
 
+	GetWorldTimerManager().SetTimer(HitTimerHandle, this, &ADestructibleWallBase::DestroyHelper, TimeToDestroy);
+}
+
+void ADestructibleWallBase::DestroyHelper()
+{
 	Destroy();
 }
 

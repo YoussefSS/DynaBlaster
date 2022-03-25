@@ -56,6 +56,11 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::Hit(AActor* OtherActor)
 {
+	if (DeathMaterial)
+	{
+		BasicStaticMesh->SetMaterial(0, DeathMaterial);
+	}
+
 	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AEnemy::DestroyHelper, TimeToDie);
 	bIsDying = true;
 	GetCharacterMovement()->StopMovementImmediately();
