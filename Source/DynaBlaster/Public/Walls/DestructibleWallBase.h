@@ -20,6 +20,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UMaterialInstance* HitMaterial;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AActor> UpgradeClass;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -34,6 +37,8 @@ public:
 
 	void SetIsUpgradeWall(bool NewVal) { bIsUpgradeWall = NewVal; }
 	void SetIsGoalWall(bool NewVal) { bIsGoalWall = NewVal; }
+
+	void EnablePulseMaterial();
 
 protected:
 

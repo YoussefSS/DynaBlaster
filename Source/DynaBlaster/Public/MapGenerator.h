@@ -94,7 +94,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation| Probability", meta = (ClampMin = "0", ClampMax = "1"))
 	float DestructibleWallSpawnChance = 0.5;
 
-	// NOTE: Not updated after creation
+	// NOTE: Not updated after creation. NOT RELIABLE
 	TMap<FVector2D, ETileType> TilesMap;
 
 	TMap<FVector2D, ETileType> DestructibleWallsMap;

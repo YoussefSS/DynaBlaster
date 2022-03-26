@@ -100,9 +100,10 @@ void APlayerCharacter::SpawnBomb()
 	}
 
 	NumBombs--;
-	ABomb* Actor = World->SpawnActor<ABomb>(BombClass, SpawnLocation, FRotator(0.f));
 
-	Actor->OnBombExploded.AddDynamic(this, &APlayerCharacter::OnBombExploded);
+	ABomb* SpawnedBomb = World->SpawnActor<ABomb>(BombClass, SpawnLocation, FRotator(0.f));
+	SpawnedBomb->SetIsUpgraded(bIsBombUpgraded);
+	SpawnedBomb->OnBombExploded.AddDynamic(this, &APlayerCharacter::OnBombExploded);
 
 
 }

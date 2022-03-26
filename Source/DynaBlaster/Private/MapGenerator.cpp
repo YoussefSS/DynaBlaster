@@ -5,8 +5,10 @@
 
 #include "DrawDebugHelpers.h"
 #include "Kismet\KismetArrayLibrary.h"
+#include "Kismet\GameplayStatics.h"
 
 #include "DynaBlaster\Public\Walls\DestructibleWallBase.h"
+#include "DynaBlaster\DynaBlasterGameModeBase.h"
 
 // Sets default values
 AMapGenerator::AMapGenerator()
@@ -131,6 +133,8 @@ void AMapGenerator::GenerateMap()
 	UWorld* World = GetWorld();
 	if (!World) return;
 
+	ADynaBlasterGameModeBase* GM = Cast<ADynaBlasterGameModeBase>(UGameplayStatics::GetGameMode(this));
+
 	// Spawn each tile
 	for (int32 i = 0; i < GetMapWidth(); i++)
 	{
@@ -155,6 +159,11 @@ void AMapGenerator::GenerateMap()
 					ADestructibleWallBase* Wall = World->SpawnActor<ADestructibleWallBase>(DestructibleWallClass, SpawnLocation, FRotator(0.f));
 					Wall->SetIsUpgradeWall(true);
 					//DrawDebugSphere(World, SpawnLocation, 25, 8, FColor::White, false, 5);
+					
+					if (GM)
+					{
+						GM->AddUpgradeWall(Wall);
+					}
 					break;
 				}
 				case ETileType::ETT_Goal:
@@ -169,6 +178,11 @@ void AMapGenerator::GenerateMap()
 					World->SpawnActor<AActor>(EnemyClass, SpawnLocation, FRotator(0.f));
 					// Set the spawn location of the enemy to Empty
 					TilesMap.Add(FVector2D(i, j), ETileType::ETT_Empty);
+
+					if (GM)
+					{
+						GM->AddEnemy();
+					}
 					break;
 				}
 				case ETileType::ETT_Empty:

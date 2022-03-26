@@ -36,6 +36,8 @@ public:
 
 	virtual void Hit(AActor* OtherActor) override;
 
+	void UpgradeBomb() { bIsBombUpgraded = true; } // If there were more upgrades, an array of enum upgrades or something like that could be used
+
 protected:
 
 	virtual void DestroyHelper() override {}
@@ -55,5 +57,6 @@ private:
 
 	ADynaBlasterGameModeBase* GetDynaBlasterGameModeBase();
 
+	bool bIsBombUpgraded = false;
 
 };

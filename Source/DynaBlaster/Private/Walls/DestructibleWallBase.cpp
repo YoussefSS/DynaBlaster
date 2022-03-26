@@ -29,27 +29,38 @@ void ADestructibleWallBase::Tick(float DeltaTime)
 
 void ADestructibleWallBase::Hit(AActor* OtherActor)
 {
-	if (HitMaterial)
-	{
-		Mesh->SetMaterial(0, HitMaterial);
-	}
+	EnablePulseMaterial();
 
 	GetWorldTimerManager().SetTimer(HitTimerHandle, this, &ADestructibleWallBase::DestroyHelper, TimeToDestroy);
 }
 
 void ADestructibleWallBase::DestroyHelper()
 {
-	// TODO: Check if goal or upgrade
-	if (bIsGoalWall)
+	UWorld* World = GetWorld();
+
+	if (World)
 	{
+		// TODO: Check if goal or upgrade
+		if (bIsGoalWall)
+		{
 
+		}
+
+		if (bIsUpgradeWall && UpgradeClass)
+		{
+			World->SpawnActor<AActor>(UpgradeClass, GetActorLocation(), FRotator(0.f));
+		}
 	}
-
-	if (bIsUpgradeWall)
-	{
-
-	}
+	
 
 	Destroy();
+}
+
+void ADestructibleWallBase::EnablePulseMaterial()
+{
+	if (HitMaterial)
+	{
+		Mesh->SetMaterial(0, HitMaterial);
+	}
 }
 

@@ -18,7 +18,7 @@ public:
 	// Sets default values for this actor's properties
 	ABomb();
 
-
+	void SetIsUpgraded(bool NewUpgraded) { bIsUpgraded = NewUpgraded; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

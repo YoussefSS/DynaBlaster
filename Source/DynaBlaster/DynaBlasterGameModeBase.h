@@ -31,9 +31,23 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "DynaBlaster")
 	class ATopDownCamera* GetTopDownCamera();
 
+	void AddUpgradeWall(class ADestructibleWallBase* WallToAdd);
+
+	TArray<ADestructibleWallBase*> GetUpgradeWalls();
+
+	void ShowUpgradeWalls();
+
+	void AddEnemy();
+
+	void RemoveEnemy();
 public:
 
 	ATopDownCamera* Cam;
 
 	AMapGenerator* MapGenerator;
+
+private:
+	TArray<ADestructibleWallBase*> UpgradeWalls;
+
+	int32 AliveEnemyCount = 0;
 };

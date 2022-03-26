@@ -7,6 +7,7 @@
 
 #include "MapGenerator.h"
 #include "TopDownCamera.h"
+#include "DynaBlaster\Public\Walls\DestructibleWallBase.h"
 
 void ADynaBlasterGameModeBase::BeginPlay()
 {
@@ -55,5 +56,38 @@ ATopDownCamera* ADynaBlasterGameModeBase::GetTopDownCamera()
 	}
 
 	return Cam;
+}
+
+void ADynaBlasterGameModeBase::AddUpgradeWall(ADestructibleWallBase* WallToAdd)
+{
+	UpgradeWalls.Add(WallToAdd);
+}
+
+TArray<ADestructibleWallBase*> ADynaBlasterGameModeBase::GetUpgradeWalls()
+{
+	return UpgradeWalls;
+}
+
+void ADynaBlasterGameModeBase::ShowUpgradeWalls()
+{
+	for (ADestructibleWallBase* Wall : UpgradeWalls)
+	{
+		Wall->EnablePulseMaterial();
+	}
+}
+
+void ADynaBlasterGameModeBase::AddEnemy()
+{
+	AliveEnemyCount++;
+}
+
+void ADynaBlasterGameModeBase::RemoveEnemy()
+{
+	AliveEnemyCount--;
+
+	if (AliveEnemyCount <= 0)
+	{
+		ShowUpgradeWalls();
+	}
 }
 

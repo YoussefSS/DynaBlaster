@@ -6,8 +6,10 @@
 #include "GameFramework\CharacterMovementComponent.h"
 #include "Components\CapsuleComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet\GameplayStatics.h"
 
 #include "DynaBlaster\Public\Characters\PlayerCharacter.h"
+#include "DynaBlaster\DynaBlasterGameModeBase.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -111,7 +113,12 @@ void AEnemy::OnCapsuleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 void AEnemy::DestroyHelper()
 {
-	// TODO: If last enemy, set pulse material on the upgradable destructible wall
+	ADynaBlasterGameModeBase* GM = Cast<ADynaBlasterGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (GM)
+	{
+		GM->RemoveEnemy();
+	}
+
 	Destroy();
 }
 
