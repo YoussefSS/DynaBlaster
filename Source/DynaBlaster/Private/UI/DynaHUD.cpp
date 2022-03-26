@@ -29,7 +29,7 @@ void UDynaHUD::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 	Super::Tick(MyGeometry, DeltaTime);
 
 	
-	if(!bTimeLimitReached)
+	if(!bTimeLimitReached && UGameplayStatics::GetGlobalTimeDilation(this)>=0.1)
 		UpdateRemainingTime(DeltaTime);
 }
 

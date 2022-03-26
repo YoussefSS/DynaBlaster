@@ -50,6 +50,8 @@ private:
 
 	void SpawnBomb();
 
+	void Pause();
+
 	UFUNCTION()
 	void OnBombExploded();
 

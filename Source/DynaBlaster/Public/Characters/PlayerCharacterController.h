@@ -21,8 +21,29 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets | InGameHUD")
 	TSubclassOf< UUserWidget> HUDWidgetAsset;
 
-	/** Variable to hold the widget after creating it */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Widgets | InGameHUD")
 	class UDynaHUD* HUDWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets | PauseMenu")
+	TSubclassOf< UUserWidget> PauseMenuWidgetAsset;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Widgets | PauseMenu")
+	UUserWidget* PauseMenuWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets | WinMenu")
+	TSubclassOf< UUserWidget> WinMenuWidgetAsset;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Widgets | WinMenu")
+	UUserWidget* WinMenuWidget;
+
+
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowPauseMenu();
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void HidePauseMenu();
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowWinMenu();
 };

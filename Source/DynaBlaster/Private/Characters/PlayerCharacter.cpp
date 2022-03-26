@@ -13,6 +13,7 @@
 #include "TopDownCamera.h"
 #include "Items\Bomb.h"
 #include "DynaBlaster/DynaBlasterGameModeBase.h"
+#include "DynaBlaster\Public\Characters\PlayerCharacterController.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -54,6 +55,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
 
 	PlayerInputComponent->BindAction("SpawnBomb", EInputEvent::IE_Pressed, this, &APlayerCharacter::SpawnBomb);
+	PlayerInputComponent->BindAction("Pause", EInputEvent::IE_Pressed, this, &APlayerCharacter::Pause);
 }
 
 void APlayerCharacter::Hit(AActor* OtherActor)
@@ -106,6 +108,16 @@ void APlayerCharacter::SpawnBomb()
 	SpawnedBomb->OnBombExploded.AddDynamic(this, &APlayerCharacter::OnBombExploded);
 
 
+}
+
+void APlayerCharacter::Pause()
+{
+	APlayerCharacterController* APCC = Cast<APlayerCharacterController>(GetController());
+
+	if (APCC)
+	{
+		APCC->ShowPauseMenu();
+	}
 }
 
 void APlayerCharacter::OnBombExploded()
