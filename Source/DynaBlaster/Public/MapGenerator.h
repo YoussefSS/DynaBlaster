@@ -55,6 +55,7 @@ protected:
 
 	void SetTileToEmptyIfDestructibleWall(int32 i, int32 j);
 
+	void SetAdjacentTilesToEmptyIfDestructibleWall(int32 i, int32 j, bool bSetMiddleTileToo = false);
 public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Map Generation")
@@ -93,7 +94,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation| Probability", meta = (ClampMin = "0", ClampMax = "1"))
 	float DestructibleWallSpawnChance = 0.5;
 
-
+	// NOTE: Not updated after creation
 	TMap<FVector2D, ETileType> TilesMap;
 
 	TMap<FVector2D, ETileType> DestructibleWallsMap;

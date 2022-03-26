@@ -17,14 +17,7 @@ ADestructibleWallBase::ADestructibleWallBase()
 void ADestructibleWallBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	OnDestroyed.AddDynamic(this, &ADestructibleWallBase::OnWallDestroyed);
-}
 
-void ADestructibleWallBase::OnWallDestroyed(AActor* DestroyedActor)
-{
-	// TODO OnWallDestroyed
-	if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Cyan, FString::Printf(TEXT("destroyed"))); }
 }
 
 // Called every frame

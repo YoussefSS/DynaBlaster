@@ -18,7 +18,7 @@ AEnemy::AEnemy()
 	GetCharacterMovement()->MaxWalkSpeed = 30;
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 }
 
 // Called when the game starts or when spawned
@@ -39,6 +39,8 @@ void AEnemy::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	if (bIsDying) return;
+
+	//DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + CurrentDirection * GetCapsuleComponent()->GetScaledCapsuleRadius() + CurrentDirection, FColor::Green, false, 0, 0, 1);
 
 	GetCharacterMovement()->AddInputVector(CurrentDirection);
 
@@ -85,7 +87,7 @@ bool AEnemy::TraceInCurrentDirection()
 
 	FVector TraceEnd = GetActorLocation() + CurrentDirection * GetCapsuleComponent()->GetScaledCapsuleRadius() + CurrentDirection;
 	FHitResult Hit;
-	if (GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), TraceEnd, ECC_Visibility, QueryParams))
+	if (GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), TraceEnd, ECC_Visibility, QueryParams)) // Be sure other enemies do not have ECC_Visibility as blocking/overlapping, as this will stop the enemy from changing direction
 	{
 		if ((&Hit.Actor) && Hit.Actor->IsA<ADynaCharacter>()) // Don't change direction if traced another character
 			return false;
@@ -109,6 +111,7 @@ void AEnemy::OnCapsuleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 void AEnemy::DestroyHelper()
 {
+	// TODO: If last enemy, set pulse material on the upgradable destructible wall
 	Destroy();
 }
 

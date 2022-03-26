@@ -24,24 +24,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
-
-	/** Spawn something on destroyed */
-
-	/** Spawn powerup or goal */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wall|Destruct")
-	bool bSpawnItemOnDestroy = false;
-
-	UPROPERTY(EditAnywhere, Category = "Wall|Destruct")
-	TSubclassOf<AActor> ItemToSpawnOnDestroy;
-
-	UFUNCTION()
-	void OnWallDestroyed(AActor* DestroyedActor);
-
-	/** End spawn something on destroyed */
-
-
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

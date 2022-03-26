@@ -41,8 +41,6 @@ void AMapGenerator::InitializeVirtualMap()
 	InitializationAttempts++;
 	if (InitializationAttempts >= 5)
 		verifyf(true, TEXT("Too many map initialization attempts. Either increase map size, or reduce enemy count"));
-	
-
 
 	// Initialize map tiles to Walls or Empty
 	for (int32 i = 0; i < GetMapWidth(); i++)
@@ -60,26 +58,19 @@ void AMapGenerator::InitializeVirtualMap()
 		int32 RandWidth = FMath::FRandRange(2, GetMapWidth() - 3);
 		int32 RandHeight = FMath::FRandRange(2, GetMapHeight() - 3);
 
-		// If random ints are in an indestructible wall, increase them by 1
-		if (RandWidth % 2 == 0) RandWidth++;
-		if (RandHeight % 2 == 0) RandHeight++;
+		// If random ints are in an indestructible wall, increase one of them by 1
+		if (RandWidth % 2 == 0 && RandHeight % 2 == 0) FMath::FRand() < 0.5 ? RandWidth++ : RandHeight++;
 
 		// If there is already an enemy in this random location, find another location. Else add the enemy to the tilemap
 		if (*TilesMap.Find(FVector2D(RandWidth, RandHeight)) == ETileType::ETT_Enemy)
 			i--; 
 		else
 		{
+			//SetAdjacentTilesToEmptyIfDestructibleWall(RandWidth, RandHeight, true); // The real DynaBlaster doesn't have this
 			SetTileToEmptyIfDestructibleWall(RandWidth, RandHeight);
 			TilesMap.Add(FVector2D(RandWidth, RandHeight), ETileType::ETT_Enemy);
-
-			// Set the adjacent tiles to empty, so that the enemy can move freely on spawn
-			SetTileToEmptyIfDestructibleWall(RandWidth - 1, RandHeight);
-			SetTileToEmptyIfDestructibleWall(RandWidth + 1, RandHeight);
-			SetTileToEmptyIfDestructibleWall(RandWidth, RandHeight - 1);
-			SetTileToEmptyIfDestructibleWall(RandWidth, RandHeight + 1);
 		}
 	}
-
 
 	// We need a minimum of 2 destructible walls to be able to have an upgrade and goal
 	if (CurrentDestructibleWallCount < 2)
@@ -91,7 +82,6 @@ void AMapGenerator::InitializeVirtualMap()
 	}
 
 	// Generate upgrade and goal locations
-
 	TArray<FVector2D> OutArr;
 	DestructibleWallsMap.GenerateKeyArray(OutArr);
 	ShuffleArray(OutArr);
@@ -136,6 +126,7 @@ void AMapGenerator::GenerateMap()
 {
 	if (!ensureMsgf(IndestrucibleWallClass != nullptr, TEXT("IndestructibleWallClass not set"))) return;
 	if (!ensureMsgf(DestructibleWallClass != nullptr, TEXT("DestructibleWallClass not set"))) return;
+	if (!ensureMsgf(DestructibleWallClass != nullptr, TEXT("EnemyClass not set"))) return;
 
 	UWorld* World = GetWorld();
 	if (!World) return;
@@ -156,7 +147,7 @@ void AMapGenerator::GenerateMap()
 				}
 				case ETileType::ETT_DestructibleWall: 
 				{
-					AActor* Actor = World->SpawnActor<AActor>(DestructibleWallClass, SpawnLocation, FRotator(0.f));
+					World->SpawnActor<AActor>(DestructibleWallClass, SpawnLocation, FRotator(0.f));
 					break;
 				}
 				case ETileType::ETT_Upgrade:
@@ -175,7 +166,7 @@ void AMapGenerator::GenerateMap()
 				}
 				case ETileType::ETT_Enemy:
 				{
-					AActor* Actor = World->SpawnActor<AActor>(EnemyClass, SpawnLocation, FRotator(0.f));
+					World->SpawnActor<AActor>(EnemyClass, SpawnLocation, FRotator(0.f));
 					// Set the spawn location of the enemy to Empty
 					TilesMap.Add(FVector2D(i, j), ETileType::ETT_Empty);
 					break;
@@ -198,6 +189,8 @@ void AMapGenerator::GenerateMap()
 
 void AMapGenerator::SpawnFloor()
 {
+	if (!ensureMsgf(FloorClass != nullptr, TEXT("FloorClass not set"))) return;
+
 	UWorld* World = GetWorld();
 	if (!World) return;
 
@@ -220,7 +213,6 @@ void AMapGenerator::PrintMap()
 			MapString += " ";
 		}
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *MapString);
-
 	}
 }
 
@@ -232,6 +224,17 @@ void AMapGenerator::SetTileToEmptyIfDestructibleWall(int32 i, int32 j)
 		DestructibleWallsMap.Remove(FVector2D(i, j));
 		CurrentDestructibleWallCount--;
 	}
+}
+
+void AMapGenerator::SetAdjacentTilesToEmptyIfDestructibleWall(int32 i, int32 j, bool bSetMiddleTileToo /*= false*/)
+{
+	SetTileToEmptyIfDestructibleWall(i - 1, j);
+	SetTileToEmptyIfDestructibleWall(i + 1, j);
+	SetTileToEmptyIfDestructibleWall(i, j - 1);
+	SetTileToEmptyIfDestructibleWall(i, j + 1);
+
+	if (bSetMiddleTileToo)
+		SetTileToEmptyIfDestructibleWall(i, j);
 }
 
 void AMapGenerator::ShuffleArray(TArray<FVector2D>& OutArr)
