@@ -77,6 +77,20 @@ void APlayerCharacter::Hit(AActor* OtherActor)
 	}
 }
 
+void APlayerCharacter::Win()
+{
+	if (WinSFX)
+	{
+		UGameplayStatics::PlaySound2D(this, WinSFX);
+	}
+
+	APlayerCharacterController* APPC = Cast<APlayerCharacterController>(GetController());
+	if (APPC)
+	{
+		APPC->ShowWinMenu();
+	}
+}
+
 void APlayerCharacter::MoveForward(float Value)
 {
 	GetCharacterMovement()->AddInputVector(FVector(Value, 0, 0));

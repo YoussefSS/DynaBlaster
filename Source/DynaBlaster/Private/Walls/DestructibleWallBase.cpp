@@ -40,10 +40,11 @@ void ADestructibleWallBase::DestroyHelper()
 
 	if (World)
 	{
-		// TODO: Check if goal or upgrade
-		if (bIsGoalWall)
-		{
+		ensure(GoalClass != nullptr && UpgradeClass != nullptr);
 
+		if (bIsGoalWall && GoalClass)
+		{
+			World->SpawnActor<AActor>(GoalClass, GetActorLocation(), FRotator(0.f));
 		}
 
 		if (bIsUpgradeWall && UpgradeClass)

@@ -65,7 +65,7 @@ bool UDynaHUD::CheckLoseCondition()
 	{
 		if (BellRingSound)
 		{
-			UGameplayStatics::PlaySound2D(this, BellRingSound); //float VolumeMultiplier, float PitchMultiplier, float StartTime)
+			UGameplayStatics::PlaySound2D(this, BellRingSound);
 		}
 
 		bTimeLimitReached = true;

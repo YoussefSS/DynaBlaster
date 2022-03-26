@@ -23,6 +23,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AActor> UpgradeClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AActor> GoalClass;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

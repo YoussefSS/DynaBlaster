@@ -76,6 +76,8 @@ void APlayerCharacterController::HidePauseMenu()
 
 void APlayerCharacterController::ShowWinMenu()
 {
+	UGameplayStatics::SetGlobalTimeDilation(this, 0);
+
 	if (WinMenuWidget)
 	{
 		WinMenuWidget->SetVisibility(ESlateVisibility::Visible);

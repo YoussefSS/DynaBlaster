@@ -24,6 +24,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Player | Bomb")
 	TSubclassOf<class ABomb> BombClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Player | SFX")
+	class USoundBase* WinSFX;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player | Bomb", meta = (ClampMin = "0"))
 	int32 NumBombs = 1;
 
@@ -37,6 +40,8 @@ public:
 	virtual void Hit(AActor* OtherActor) override;
 
 	void UpgradeBomb() { bIsBombUpgraded = true; } // If there were more upgrades, an array of enum upgrades or something like that could be used
+
+	void Win();
 
 protected:
 
