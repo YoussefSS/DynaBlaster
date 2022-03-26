@@ -50,6 +50,9 @@ public:
 
 	virtual void DestroyHelper() override;
 
+	void SetIsUpgradeWall(bool NewVal) { bIsUpgradeWall = NewVal; }
+	void SetIsGoalWall(bool NewVal) { bIsGoalWall = NewVal; }
+
 protected:
 
 	FTimerHandle HitTimerHandle;
@@ -57,5 +60,8 @@ protected:
 	/** How long before this wall is destroyed */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
 	float TimeToDestroy = 1.2;
+
+	bool bIsUpgradeWall = false;
+	bool bIsGoalWall = false;
 
 };

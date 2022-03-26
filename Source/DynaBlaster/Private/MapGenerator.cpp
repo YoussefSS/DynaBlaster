@@ -4,6 +4,9 @@
 #include "MapGenerator.h"
 
 #include "DrawDebugHelpers.h"
+#include "Kismet\KismetArrayLibrary.h"
+
+#include "DynaBlaster\Public\Walls\DestructibleWallBase.h"
 
 // Sets default values
 AMapGenerator::AMapGenerator()
@@ -18,11 +21,12 @@ void AMapGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 	
+
 	InitializeVirtualMap();
 
 	GenerateMap();
 
-	PrintMap();
+	//PrintMap();
 }
 
 // Called every frame
@@ -34,6 +38,12 @@ void AMapGenerator::Tick(float DeltaTime)
 
 void AMapGenerator::InitializeVirtualMap()
 {
+	InitializationAttempts++;
+	if (InitializationAttempts >= 5)
+		verifyf(true, TEXT("Too many map initialization attempts. Either increase map size, or reduce enemy count"));
+	
+
+
 	// Initialize map tiles to Walls or Empty
 	for (int32 i = 0; i < GetMapWidth(); i++)
 	{
@@ -54,21 +64,46 @@ void AMapGenerator::InitializeVirtualMap()
 		if (RandWidth % 2 == 0) RandWidth++;
 		if (RandHeight % 2 == 0) RandHeight++;
 
-		// If enemy there is already an enemy in this random location, find another location. Else add the enemy to the tilemap
+		// If there is already an enemy in this random location, find another location. Else add the enemy to the tilemap
 		if (*TilesMap.Find(FVector2D(RandWidth, RandHeight)) == ETileType::ETT_Enemy)
 			i--; 
 		else
+		{
+			SetTileToEmptyIfDestructibleWall(RandWidth, RandHeight);
 			TilesMap.Add(FVector2D(RandWidth, RandHeight), ETileType::ETT_Enemy);
 
-		// Set the adjacent tiles to empty, so that the enemy can move freely on spawn
-		SetTileToEmptyIfDestructibleWall(RandWidth - 1, RandHeight);
-		SetTileToEmptyIfDestructibleWall(RandWidth + 1, RandHeight);
-		SetTileToEmptyIfDestructibleWall(RandWidth, RandHeight - 1);
-		SetTileToEmptyIfDestructibleWall(RandWidth, RandHeight + 1);
+			// Set the adjacent tiles to empty, so that the enemy can move freely on spawn
+			SetTileToEmptyIfDestructibleWall(RandWidth - 1, RandHeight);
+			SetTileToEmptyIfDestructibleWall(RandWidth + 1, RandHeight);
+			SetTileToEmptyIfDestructibleWall(RandWidth, RandHeight - 1);
+			SetTileToEmptyIfDestructibleWall(RandWidth, RandHeight + 1);
+		}
 	}
-	
 
-	return;
+
+	// We need a minimum of 2 destructible walls to be able to have an upgrade and goal
+	if (CurrentDestructibleWallCount < 2)
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("reinitialize tilesmap"));
+		CurrentDestructibleWallCount = 0;
+		InitializeVirtualMap();
+		return;
+	}
+
+	// Generate upgrade and goal locations
+
+	TArray<FVector2D> OutArr;
+	DestructibleWallsMap.GenerateKeyArray(OutArr);
+	ShuffleArray(OutArr);
+
+	// Take 2 first elements after shuffling, 
+	FVector2D Goal2DLocation = OutArr[0]; // Guaranteed as we check for CurrentDestructibleWallCount < 2
+	TilesMap.Add(Goal2DLocation, ETileType::ETT_Goal);
+	DestructibleWallsMap.Remove(Goal2DLocation);
+
+	FVector2D Upgrade2DLocation = OutArr[1]; // Guaranteed as we check for CurrentDestructibleWallCount < 2
+	TilesMap.Add(Upgrade2DLocation, ETileType::ETT_Upgrade);
+	DestructibleWallsMap.Remove(Upgrade2DLocation);
 }
 
 void AMapGenerator::InitializeTileAt(const int32& i, const int32& j)
@@ -86,19 +121,19 @@ void AMapGenerator::InitializeTileAt(const int32& i, const int32& j)
 			|| (i == 1 && j == 1) || (i == 2 && j == 1) || (i == 1 && j == 2)) // Do not spawn walls in (1,1) , (2,1) , (1,2) , so that the player has an area to move in
 		{
 			TilesMap.Add(FVector2D(i, j), ETileType::ETT_Empty);
-			EmptyTilesMap.Add(FVector2D(i, j), ETileType::ETT_Empty);
 		}
 		else // Destructible wall
 		{
 			TilesMap.Add(FVector2D(i, j), ETileType::ETT_DestructibleWall);
-		}
+			DestructibleWallsMap.Add(FVector2D(i, j), ETileType::ETT_DestructibleWall);
+			CurrentDestructibleWallCount++;
+		} 
 	}
 }
 
 
 void AMapGenerator::GenerateMap()
 {
-	//AActor* test;
 	if (!ensureMsgf(IndestrucibleWallClass != nullptr, TEXT("IndestructibleWallClass not set"))) return;
 	if (!ensureMsgf(DestructibleWallClass != nullptr, TEXT("DestructibleWallClass not set"))) return;
 
@@ -124,6 +159,20 @@ void AMapGenerator::GenerateMap()
 					AActor* Actor = World->SpawnActor<AActor>(DestructibleWallClass, SpawnLocation, FRotator(0.f));
 					break;
 				}
+				case ETileType::ETT_Upgrade:
+				{
+					ADestructibleWallBase* Wall = World->SpawnActor<ADestructibleWallBase>(DestructibleWallClass, SpawnLocation, FRotator(0.f));
+					Wall->SetIsUpgradeWall(true);
+					//DrawDebugSphere(World, SpawnLocation, 25, 8, FColor::White, false, 5);
+					break;
+				}
+				case ETileType::ETT_Goal:
+				{
+					ADestructibleWallBase* Wall = World->SpawnActor<ADestructibleWallBase>(DestructibleWallClass, SpawnLocation, FRotator(0.f));
+					Wall->SetIsGoalWall(true);
+					//DrawDebugSphere(World, SpawnLocation, 25, 8, FColor::Blue, false, 5);
+					break;
+				}
 				case ETileType::ETT_Enemy:
 				{
 					AActor* Actor = World->SpawnActor<AActor>(EnemyClass, SpawnLocation, FRotator(0.f));
@@ -137,7 +186,7 @@ void AMapGenerator::GenerateMap()
 				}
 				default: 
 				{
-					if (!ensureMsgf(false, TEXT("AMapGenerator::GenerateMap() .. enum type not handled"))) return;
+					ensureMsgf(false, TEXT("AMapGenerator::GenerateMap() .. enum type not handled"));
 					break;
 				}
 			}
@@ -177,6 +226,21 @@ void AMapGenerator::PrintMap()
 
 void AMapGenerator::SetTileToEmptyIfDestructibleWall(int32 i, int32 j)
 {
-	if (*TilesMap.Find(FVector2D(i, j)) == ETileType::ETT_DestructibleWall) TilesMap.Add(FVector2D(i, j), ETileType::ETT_Empty);
+	if (*TilesMap.Find(FVector2D(i, j)) == ETileType::ETT_DestructibleWall)
+	{
+		TilesMap.Add(FVector2D(i, j), ETileType::ETT_Empty);
+		DestructibleWallsMap.Remove(FVector2D(i, j));
+		CurrentDestructibleWallCount--;
+	}
+}
+
+void AMapGenerator::ShuffleArray(TArray<FVector2D>& OutArr)
+{
+	const int32 NumShuffles = OutArr.Num() - 1;
+	for (int32 i = 0; i < NumShuffles; ++i)
+	{
+		int32 SwapIdx = FMath::RandRange(i, NumShuffles);
+		OutArr.Swap(i, SwapIdx);
+	}
 }
 

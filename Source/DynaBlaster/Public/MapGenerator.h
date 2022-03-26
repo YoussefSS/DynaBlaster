@@ -13,6 +13,8 @@ enum class ETileType : uint8
 	ETT_IndestructibleWall		UMETA(DisplayName = "IndestructibleWall"),
 	ETT_DestructibleWall		UMETA(DisplayName = "DestructibleWall"),
 	ETT_Enemy					UMETA(DisplayName = "Enemy"),
+	ETT_Upgrade					UMETA(DisplayName = "Upgrade"),
+	ETT_Goal					UMETA(DisplayName = "Goal"),
 
 	EMS_MAX						UMETA(DisplayName = "DefaultMAX")
 };
@@ -59,7 +61,7 @@ public:
 	TSubclassOf<AActor> IndestrucibleWallClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Map Generation")
-	TSubclassOf<AActor> DestructibleWallClass;
+	TSubclassOf<class ADestructibleWallBase> DestructibleWallClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Map Generation")
 	TSubclassOf<AActor> EnemyClass;
@@ -69,10 +71,10 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation", meta = (ClampMin = "5"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation", meta = (ClampMin = "7"))
 	int32 MapWidth = 11;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation", meta = (ClampMin = "5"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation", meta = (ClampMin = "7"))
 	int32 MapHeight = 11;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
@@ -94,10 +96,13 @@ protected:
 
 	TMap<FVector2D, ETileType> TilesMap;
 
-	TMap<FVector2D, ETileType> EmptyTilesMap;
+	TMap<FVector2D, ETileType> DestructibleWallsMap;
 
 private:
 
 	int32 EmptyTilesCount = 0;
-	int32 DestructibleWallCount = 0;
+	int32 CurrentDestructibleWallCount = 0;
+	int32 InitializationAttempts = 0;
+
+	void ShuffleArray(TArray<FVector2D>& OutArr);
 };

@@ -46,6 +46,17 @@ void ADestructibleWallBase::Hit(AActor* OtherActor)
 
 void ADestructibleWallBase::DestroyHelper()
 {
+	// TODO: Check if goal or upgrade
+	if (bIsGoalWall)
+	{
+
+	}
+
+	if (bIsUpgradeWall)
+	{
+
+	}
+
 	Destroy();
 }
 
