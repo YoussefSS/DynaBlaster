@@ -49,16 +49,21 @@ public:
 	void PrintMap();
 
 	FORCEINLINE int32 GetNumRows() { return Rows + 2; }
+
 	FORCEINLINE int32 GetNumColumns() { return Columns + 2; }
 
 	FORCEINLINE int32 GetTileWorldSize() { return TileWorldSize; }
+
+	FORCEINLINE int32 GetGameTimeLimit() { return GameTimeLimit; }
 
 protected:
 
 	void SetTileToEmptyIfDestructibleWall(int32 i, int32 j);
 
 	void SetAdjacentTilesToEmptyIfDestructibleWall(int32 i, int32 j, bool bSetMiddleTileToo = false);
+
 public:
+
 	UPROPERTY(VisibleDefaultsOnly, Category = "Map Generation")
 	USceneComponent* RootComp;
 
@@ -90,6 +95,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
 	int32 EnemyCount = 3;
+
+	/** How long the game should last */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
+	int32 GameTimeLimit = 240;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation| Settings")
 	int32 ZSpawnLocation = 0;

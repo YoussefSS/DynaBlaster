@@ -54,6 +54,7 @@ protected:
 	/** How long before this enemy is destroyed */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
 	float TimeToDie = 1.2;
+
 private:
 
 	int32 CurrentTraceAttempts = 0;

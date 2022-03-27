@@ -11,6 +11,8 @@
 
 #include "DynaBlaster/Public/Interfaces\Hittable.h"
 #include "DynaBlaster/Public/Items/BombTrace.h"
+#include "DynaBlaster\Public\Characters\PlayerCharacter.h"
+
 // Sets default values
 ABomb::ABomb()
 {
@@ -72,10 +74,9 @@ void ABomb::ExplodeOnAxis(FVector AxisToTraceOn)
 	{
 		// If upgraded, do another hit test with the regular trace end, if there is nothing there, spawn a particle
 		FHitResult CloseHit;
-		bool bCloseRangeHit = true;
 		if (bIsUpgraded && !GetWorld()->LineTraceSingleByChannel(CloseHit, GetActorLocation(), TraceEndRegular, ECC_Visibility, QueryParams)) // If upgraded, spawn a particle at the regular position
 		{
-			bCloseRangeHit = false;
+			SpawnBombTraceAt(TraceEndRegular);
 		}
 
 		// Check for hittable
@@ -88,11 +89,6 @@ void ABomb::ExplodeOnAxis(FVector AxisToTraceOn)
 				SpawnBombTraceAt(TraceEndRegular);
 			}
 			Hittable->Hit(this);
-		}
-
-		if (!bCloseRangeHit)
-		{
-			SpawnBombTraceAt(TraceEndRegular);
 		}
 	}
 	else
@@ -117,7 +113,7 @@ void ABomb::SpawnBombTraceAt(FVector SpawnLocation)
 	UWorld* World = GetWorld();
 	if (BombTraceClass && World)
 	{
-		ABombTrace* Actor = World->SpawnActor<ABombTrace>(BombTraceClass, SpawnLocation, FRotator(0.f));
+		World->SpawnActor<ABombTrace>(BombTraceClass, SpawnLocation, FRotator(0.f));
 	}
 }
 
@@ -130,7 +126,8 @@ void ABomb::Tick(float DeltaTime)
 
 void ABomb::ABombOnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	// Player shouldn't be walk over the bomb after placing it and moving away
-	BoxComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+	// Player shouldn't be able to walk over the bomb after placing it and moving away
+	if(OtherActor->IsA<APlayerCharacter>())
+		BoxComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 }
 

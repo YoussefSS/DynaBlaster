@@ -28,7 +28,6 @@ protected:
 	// Called every frame
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget), Category = "HUD")
 	class UTextBlock* RemainingTimeText;
 
@@ -48,13 +47,14 @@ protected:
 
 public:
 	
-
 	void SetMaxGameTime(float NewTime);
 
 	void UpdateRemainingTime(float DeltaTime);
 
-	/** Returns true if lose condition is true */
+	/** Returns true if lose condition is true (remainingtime<0) */
 	bool CheckLoseCondition();
+
+	void Lose();
 
 private:
 

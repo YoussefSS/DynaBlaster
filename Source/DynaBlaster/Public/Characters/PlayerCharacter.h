@@ -49,6 +49,8 @@ protected:
 
 private:
 
+	void SetViewToTopDownCamera();
+
 	void MoveForward(float Value);
 
 	void MoveRight(float Value);

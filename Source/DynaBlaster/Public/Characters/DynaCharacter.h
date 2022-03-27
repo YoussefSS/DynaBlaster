@@ -18,6 +18,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* BasicStaticMesh;
 
+	/** The material that is placed on the mesh when the player dies */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UMaterialInstance* DeathMaterial;
 

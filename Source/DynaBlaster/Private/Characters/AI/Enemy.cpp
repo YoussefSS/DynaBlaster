@@ -46,6 +46,7 @@ void AEnemy::Tick(float DeltaTime)
 
 	GetCharacterMovement()->AddInputVector(CurrentDirection);
 
+	// Find a new direction if something is blocking me
 	while (CurrentTraceAttempts++ < TraceAttemptsPerFrame && TraceInCurrentDirection())
 		ChooseNewRandomDirection();
 	CurrentTraceAttempts = 0;
@@ -95,7 +96,6 @@ bool AEnemy::TraceInCurrentDirection()
 			return false;
 		else
 			return true;
-		
 	}
 	//DrawDebugLine(GetWorld(), GetActorLocation(), TraceEnd, FColor::Blue, false, 0, 0, 1);
 

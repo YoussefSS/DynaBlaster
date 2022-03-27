@@ -28,15 +28,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	APlayerController* PC = Cast<APlayerController>(GetController());
-	UWorld* World = GetWorld();
-	if (PC && World)
-	{
-		for (TActorIterator<ATopDownCamera> CameraItr(World); CameraItr; ++CameraItr)
-		{
-			PC->SetViewTarget(*CameraItr);
-		}
-	}
+	SetViewToTopDownCamera();
 }
 
 // Called every frame
@@ -91,6 +83,22 @@ void APlayerCharacter::Win()
 	}
 }
 
+void APlayerCharacter::SetViewToTopDownCamera()
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	UWorld* World = GetWorld();
+	bool bCamFound = false;
+	if (PC && World)
+	{
+		for (TActorIterator<ATopDownCamera> CameraItr(World); CameraItr; ++CameraItr)
+		{
+			PC->SetViewTarget(*CameraItr);
+			bCamFound = true;
+		}
+	}
+	if(!bCamFound) UE_LOG(LogTemp, Error, TEXT("There is no ATopDownCamera in the map"));
+}
+
 void APlayerCharacter::MoveForward(float Value)
 {
 	GetCharacterMovement()->AddInputVector(FVector(Value, 0, 0));
@@ -120,8 +128,6 @@ void APlayerCharacter::SpawnBomb()
 	ABomb* SpawnedBomb = World->SpawnActor<ABomb>(BombClass, SpawnLocation, FRotator(0.f));
 	SpawnedBomb->SetIsUpgraded(bIsBombUpgraded);
 	SpawnedBomb->OnBombExploded.AddDynamic(this, &APlayerCharacter::OnBombExploded);
-
-
 }
 
 void APlayerCharacter::Pause()
