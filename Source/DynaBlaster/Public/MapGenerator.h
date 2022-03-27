@@ -40,14 +40,16 @@ protected:
 
 	void SpawnFloor();
 
+	void InitializeCameraPosition();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void PrintMap();
 
-	FORCEINLINE int32 GetMapWidth() { return Rows + 2; }
-	FORCEINLINE int32 GetMapHeight() { return Columns + 2; }
+	FORCEINLINE int32 GetNumRows() { return Rows + 2; }
+	FORCEINLINE int32 GetNumColumns() { return Columns + 2; }
 
 	FORCEINLINE int32 GetTileWorldSize() { return TileWorldSize; }
 

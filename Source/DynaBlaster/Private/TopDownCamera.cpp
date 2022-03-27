@@ -12,3 +12,8 @@ void ATopDownCamera::BeginPlay()
 
 	FadeIn();
 }
+
+void ATopDownCamera::SetCameraLocation(FVector NewLocation)
+{
+	SetActorLocation(NewLocation);
+}

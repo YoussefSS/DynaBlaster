@@ -27,4 +27,6 @@ public:
 	/** From transparent to black, implemented in blueprints */
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void FadeOut();
+
+	void SetCameraLocation(FVector NewLocation);
 };

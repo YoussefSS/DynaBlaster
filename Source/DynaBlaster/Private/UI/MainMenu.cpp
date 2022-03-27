@@ -51,7 +51,6 @@ void UMainMenu::InitializeOptionValues()
 {
 	if (!GetDynaGameInstance()) return;
 		
-		
 	if (RowSlider && RowText)
 	{
 		RowSlider->SetValue(GetDynaGameInstance()->GetNumRows());
@@ -60,10 +59,9 @@ void UMainMenu::InitializeOptionValues()
 
 	if (ColumnSlider && ColumnText)
 	{
-		ColumnSlider->SetValue(GetDynaGameInstance()->GetNumRows());
+		ColumnSlider->SetValue(GetDynaGameInstance()->GetNumColumns());
 		ColumnText->SetText(FText::FromString(FString::FromInt(GetDynaGameInstance()->GetNumColumns())));
 	}
-	
 }
 
 void UMainMenu::StartButtonClicked()

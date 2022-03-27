@@ -6,10 +6,12 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet\KismetArrayLibrary.h"
 #include "Kismet\GameplayStatics.h"
+#include "EngineUtils.h"
 
 #include "DynaBlaster\Public\Walls\DestructibleWallBase.h"
 #include "DynaBlaster\DynaBlasterGameModeBase.h"
 #include "DynaBlaster\Public\DynaGameInstance.h"
+#include "DynaBlaster\Public\TopDownCamera.h"
 
 // Sets default values
 AMapGenerator::AMapGenerator()
@@ -38,6 +40,8 @@ void AMapGenerator::BeginPlay()
 
 	GenerateMap();
 
+	InitializeCameraPosition();
+
 	//PrintMap();
 }
 
@@ -55,9 +59,9 @@ void AMapGenerator::InitializeVirtualMap()
 		verifyf(true, TEXT("Too many map initialization attempts. Either increase map size, or reduce enemy count"));
 
 	// Initialize map tiles to Walls or Empty
-	for (int32 i = 0; i < GetMapWidth(); i++)
+	for (int32 i = 0; i < GetNumRows(); i++)
 	{
-		for (int32 j = 0; j < GetMapHeight(); j++)
+		for (int32 j = 0; j < GetNumColumns(); j++)
 		{
 			InitializeTileAt(i, j);
 		}
@@ -67,8 +71,8 @@ void AMapGenerator::InitializeVirtualMap()
 	for (int32 i = 0; i < EnemyCount; i++)
 	{
 		// Get random num in width and height. 
-		int32 RandWidth = FMath::FRandRange(2, GetMapWidth() - 3);
-		int32 RandHeight = FMath::FRandRange(2, GetMapHeight() - 3);
+		int32 RandWidth = FMath::FRandRange(2, GetNumRows() - 3);
+		int32 RandHeight = FMath::FRandRange(2, GetNumColumns() - 3);
 
 		// If random ints are in an indestructible wall, increase one of them by 1
 		if (RandWidth % 2 == 0 && RandHeight % 2 == 0) FMath::FRand() < 0.5 ? RandWidth++ : RandHeight++;
@@ -110,7 +114,7 @@ void AMapGenerator::InitializeVirtualMap()
 
 void AMapGenerator::InitializeTileAt(const int32& i, const int32& j)
 {
-	if (i == 0 || i == GetMapWidth() - 1 || j == 0 || j == GetMapHeight() - 1 // outer Edges
+	if (i == 0 || i == GetNumRows() - 1 || j == 0 || j == GetNumColumns() - 1 // outer Edges
 		|| (i % 2 == 0 && j % 2 == 0)) // indestructible wall every other tile
 	{
 		TilesMap.Add(FVector2D(i, j), ETileType::ETT_IndestructibleWall);
@@ -147,9 +151,9 @@ void AMapGenerator::GenerateMap()
 	ADynaBlasterGameModeBase* GM = Cast<ADynaBlasterGameModeBase>(UGameplayStatics::GetGameMode(this));
 
 	// Spawn each tile
-	for (int32 i = 0; i < GetMapWidth(); i++)
+	for (int32 i = 0; i < GetNumRows(); i++)
 	{
-		for (int32 j = 0; j < GetMapHeight(); j++)
+		for (int32 j = 0; j < GetNumColumns(); j++)
 		{
 			FVector SpawnLocation = FVector(i * TileWorldSize, j * TileWorldSize, ZSpawnLocation);
 
@@ -221,19 +225,36 @@ void AMapGenerator::SpawnFloor()
 	UWorld* World = GetWorld();
 	if (!World) return;
 
-	FVector SpawnLocation = FVector(TileWorldSize * GetMapWidth() / 2 - TileWorldSize / 2, TileWorldSize * GetMapHeight() / 2 - TileWorldSize / 2, ZSpawnLocation - TileWorldSize / 2 - FloorSpawnZOffset);
+	FVector SpawnLocation = FVector(TileWorldSize * GetNumRows() / 2 - TileWorldSize / 2, TileWorldSize * GetNumColumns() / 2 - TileWorldSize / 2, ZSpawnLocation - TileWorldSize / 2 - FloorSpawnZOffset);
 	AActor* Actor = World->SpawnActor<AActor>(FloorClass, SpawnLocation, FRotator(0.f));
-	Actor->SetActorScale3D(FVector(TileWorldSize * GetMapWidth(), TileWorldSize * GetMapHeight(), FloorSpawnZOffset));
+	Actor->SetActorScale3D(FVector(TileWorldSize * GetNumRows(), TileWorldSize * GetNumColumns(), FloorSpawnZOffset));
+}
+
+void AMapGenerator::InitializeCameraPosition()
+{
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	FVector MapStart = FVector(GetActorLocation());
+	FVector MapEnd = FVector(GetNumRows() * TileWorldSize, GetNumColumns() * TileWorldSize, GetActorLocation().Z);
+	FVector MidPoint = (MapStart + MapEnd) / 2;
+	float MapDistance = FVector::Dist(MapStart, MapEnd);
+	MidPoint.Z = MapDistance*0.85;
+	
+	for (TActorIterator<ATopDownCamera> CameraItr(World); CameraItr; ++CameraItr)
+	{
+		CameraItr->SetActorLocation(MidPoint);
+	}
 }
 
 void AMapGenerator::PrintMap()
 {
 	FString MapString = "";
 
-	for (int32 i = 0; i < GetMapWidth(); i++)
+	for (int32 i = 0; i < GetNumRows(); i++)
 	{
 		MapString = "";
-		for (int32 j = 0; j < GetMapHeight(); j++)
+		for (int32 j = 0; j < GetNumColumns(); j++)
 		{
 			ETileType TileType = *TilesMap.Find(FVector2D(i, j));
 			MapString = MapString + UEnum::GetDisplayValueAsText(TileType).ToString();
