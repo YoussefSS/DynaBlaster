@@ -46,8 +46,8 @@ public:
 
 	void PrintMap();
 
-	FORCEINLINE int32 GetMapWidth() { return MapWidth + 2; }
-	FORCEINLINE int32 GetMapHeight() { return MapHeight + 2; }
+	FORCEINLINE int32 GetMapWidth() { return Rows + 2; }
+	FORCEINLINE int32 GetMapHeight() { return Columns + 2; }
 
 	FORCEINLINE int32 GetTileWorldSize() { return TileWorldSize; }
 
@@ -72,11 +72,11 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation", meta = (ClampMin = "7"))
-	int32 MapWidth = 11;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Map Generation", meta = (ClampMin = "7"))
+	int32 Rows = 11;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation", meta = (ClampMin = "7"))
-	int32 MapHeight = 11;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Map Generation", meta = (ClampMin = "7"))
+	int32 Columns = 11;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation")
 	int32 TileWorldSize = 25;
@@ -106,4 +106,6 @@ private:
 	int32 InitializationAttempts = 0;
 
 	void ShuffleArray(TArray<FVector2D>& OutArr);
+
+	void InitializeRowsAndColumns();
 };

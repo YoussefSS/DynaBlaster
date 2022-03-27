@@ -9,6 +9,7 @@
 
 #include "DynaBlaster\Public\Walls\DestructibleWallBase.h"
 #include "DynaBlaster\DynaBlasterGameModeBase.h"
+#include "DynaBlaster\Public\DynaGameInstance.h"
 
 // Sets default values
 AMapGenerator::AMapGenerator()
@@ -23,6 +24,7 @@ void AMapGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	InitializeRowsAndColumns();
 
 	InitializeVirtualMap();
 
@@ -258,6 +260,17 @@ void AMapGenerator::ShuffleArray(TArray<FVector2D>& OutArr)
 	{
 		int32 SwapIdx = FMath::RandRange(i, NumShuffles);
 		OutArr.Swap(i, SwapIdx);
+	}
+}
+
+void AMapGenerator::InitializeRowsAndColumns()
+{
+	UDynaGameInstance* GI = Cast<UDynaGameInstance>(UGameplayStatics::GetGameInstance(this));
+
+	if (GI)
+	{
+		Rows = GI->GetNumRows();
+		Columns = GI->GetNumColumns();
 	}
 }
 
