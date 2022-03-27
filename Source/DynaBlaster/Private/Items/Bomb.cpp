@@ -27,27 +27,31 @@ void ABomb::BeginPlay()
 	Super::BeginPlay();
 	
 	GetWorldTimerManager().SetTimer(BombTimer, this, &ABomb::Explode, TimeToExplode);
+
+	BoxComponent->OnComponentEndOverlap.AddDynamic(this, &ABomb::ABombOnBoxEndOverlap);
 }
 
 void ABomb::Explode()
 {
-	// Play visual effect
-	
+	if (ExplosionSFX)
+	{
+		UGameplayStatics::PlaySound2D(this, ExplosionSFX);
+	}
 
 	// Destroy adjacent tiles
-	ExplodeOnTraceAxis(GetActorForwardVector());
-	ExplodeOnTraceAxis(-GetActorForwardVector());
-	ExplodeOnTraceAxis(GetActorRightVector());
-	ExplodeOnTraceAxis(-GetActorRightVector());
-
+	ExplodeOnAxis(GetActorForwardVector());
+	ExplodeOnAxis(-GetActorForwardVector());
+	ExplodeOnAxis(GetActorRightVector());
+	ExplodeOnAxis(-GetActorRightVector());
 	
 	SpawnBombTraceAt(GetActorLocation());
 
 	OnBombExploded.Broadcast();
+
 	Destroy();
 }
 
-void ABomb::ExplodeOnTraceAxis(FVector AxisToTraceOn)
+void ABomb::ExplodeOnAxis(FVector AxisToTraceOn)
 {
 	// Set trace ends
 	FVector TraceEndRegular = GetActorLocation() + AxisToTraceOn * TraceLengthRegular;
@@ -55,13 +59,9 @@ void ABomb::ExplodeOnTraceAxis(FVector AxisToTraceOn)
 	FVector FinalTraceEnd;
 	
 	if (!bIsUpgraded)
-	{
 		FinalTraceEnd = TraceEndRegular;
-	}
 	else
-	{
 		FinalTraceEnd = TraceEndUpgraded;
-	}
 
 	// LineTrace
 	FCollisionQueryParams QueryParams;
@@ -126,5 +126,11 @@ void ABomb::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ABomb::ABombOnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	// Player shouldn't be walk over the bomb after placing it and moving away
+	BoxComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 }
 

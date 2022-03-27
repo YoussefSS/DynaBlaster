@@ -18,14 +18,17 @@ public:
 	// Sets default values for this actor's properties
 	ABomb();
 
-	void SetIsUpgraded(bool NewUpgraded) { bIsUpgraded = NewUpgraded; }
+	UPROPERTY(EditDefaultsOnly, Category = "Bomb")
+	class USoundBase* ExplosionSFX;
+
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void Explode();
 
-	void ExplodeOnTraceAxis(FVector AxisToTraceOn);
+	void ExplodeOnAxis(FVector AxisToTraceOn);
 
 	void SpawnBombTraceAt(FVector SpawnLocation);
 
@@ -51,6 +54,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void SetIsUpgraded(bool NewUpgraded) { bIsUpgraded = NewUpgraded; }
+
 	FOnBombExploded OnBombExploded;
+
+private:
+	UFUNCTION()
+	void ABombOnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 };
