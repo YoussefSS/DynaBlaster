@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "DynaBlasterGameModeBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCurrentScoreChanged, int32, NewScore);
+
 class AMapGenerator;
 /**
  * 
@@ -19,6 +21,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 public:
 
 	AMapGenerator* GetMapGenerator();
@@ -39,7 +42,8 @@ public:
 
 	void AddEnemy();
 
-	void RemoveEnemy();
+	void RemoveEnemy(bool bAdjustScore = true);
+
 public:
 
 	ATopDownCamera* Cam;
@@ -50,4 +54,16 @@ private:
 	TArray<ADestructibleWallBase*> UpgradeWalls;
 
 	int32 AliveEnemyCount = 0;
+
+private: /** Score / Saving */
+	int32 CurrentScore = 0;
+	int32 Highscore = 0;
+
+public:
+	FOnCurrentScoreChanged OnCurrentScoreChanged;
+
+	void SaveGame();
+	void LoadGame();
+
+	int32 GetHighScore();
 };

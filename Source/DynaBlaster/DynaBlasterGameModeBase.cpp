@@ -4,15 +4,27 @@
 #include "DynaBlasterGameModeBase.h"
 
 #include "EngineUtils.h"
+#include "Kismet\GameplayStatics.h"
 
 #include "MapGenerator.h"
 #include "TopDownCamera.h"
 #include "DynaBlaster\Public\Walls\DestructibleWallBase.h"
+#include "DynaBlaster\Public\Saving\ScoreSaveGame.h"
 
 void ADynaBlasterGameModeBase::BeginPlay()
 {
+	Super::BeginPlay();
+
 	GetMapGenerator();
 
+	LoadGame();
+}
+
+void ADynaBlasterGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	SaveGame();
 }
 
 AMapGenerator* ADynaBlasterGameModeBase::GetMapGenerator()
@@ -81,7 +93,7 @@ void ADynaBlasterGameModeBase::AddEnemy()
 	AliveEnemyCount++;
 }
 
-void ADynaBlasterGameModeBase::RemoveEnemy()
+void ADynaBlasterGameModeBase::RemoveEnemy(bool bAdjustScore /*= true*/)
 {
 	AliveEnemyCount--;
 
@@ -89,5 +101,41 @@ void ADynaBlasterGameModeBase::RemoveEnemy()
 	{
 		ShowUpgradeWalls();
 	}
+
+	if (bAdjustScore)
+	{
+		CurrentScore += 100;
+		OnCurrentScoreChanged.Broadcast(CurrentScore);
+	}
+}
+
+void ADynaBlasterGameModeBase::SaveGame()
+{
+	UScoreSaveGame* SaveGameInstance = Cast<UScoreSaveGame>(UGameplayStatics::CreateSaveGameObject(UScoreSaveGame::StaticClass()));
+
+	int32 NewMax = FMath::Max(CurrentScore, Highscore);
+	SaveGameInstance->Highscore = NewMax;
+
+	UGameplayStatics::SaveGameToSlot(SaveGameInstance, "DynaSave", 0);
+}
+
+void ADynaBlasterGameModeBase::LoadGame()
+{
+	UScoreSaveGame* LoadGameInstance = Cast<UScoreSaveGame>(UGameplayStatics::CreateSaveGameObject(UScoreSaveGame::StaticClass()));
+	if (UGameplayStatics::DoesSaveGameExist("DynaSave", 0)) // Check if the save game exists before loading
+	{
+		LoadGameInstance = Cast<UScoreSaveGame>(UGameplayStatics::LoadGameFromSlot("DynaSave", 0));
+
+		Highscore = LoadGameInstance->Highscore;
+	}
+	else
+	{
+		Highscore = 0;
+	}
+}
+
+int32 ADynaBlasterGameModeBase::GetHighScore()
+{
+	return Highscore;
 }
 

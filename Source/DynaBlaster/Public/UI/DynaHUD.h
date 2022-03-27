@@ -32,6 +32,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget), Category = "HUD")
 	class UTextBlock* RemainingTimeText;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget), Category = "HUD")
+	UTextBlock* CurrentScoreText;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget), Category = "HUD")
+	UTextBlock* HighscoreText;
+
 	/** The time the game should last in seconds */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HUD")
 	float MaxGameTime = 240;
@@ -49,4 +55,9 @@ public:
 
 	/** Returns true if lose condition is true */
 	bool CheckLoseCondition();
+
+private:
+
+	UFUNCTION()
+	void OnCurrentScoreChanged(int32 NewScore);
 };
