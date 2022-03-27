@@ -57,6 +57,11 @@ protected:
 
 	void SetAdjacentTilesToEmptyIfDestructibleWall(int32 i, int32 j, bool bSetMiddleTileToo = false);
 public:
+	UPROPERTY(VisibleDefaultsOnly, Category = "Map Generation")
+	USceneComponent* RootComp;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Map Generation")
+	UInstancedStaticMeshComponent* IndestructibleWallISM;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Map Generation")
 	TSubclassOf<AActor> IndestrucibleWallClass;

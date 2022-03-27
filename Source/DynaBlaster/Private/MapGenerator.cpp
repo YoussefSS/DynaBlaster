@@ -17,6 +17,14 @@ AMapGenerator::AMapGenerator()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	RootComp = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
+	SetRootComponent(RootComp);
+
+	IndestructibleWallISM = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("IndestructibleWallISM"));
+	IndestructibleWallISM->SetupAttachment(RootComp);
+	IndestructibleWallISM->SetCastShadow(false);
+
+		
 }
 
 // Called when the game starts or when spawned
@@ -128,7 +136,8 @@ void AMapGenerator::InitializeTileAt(const int32& i, const int32& j)
 
 void AMapGenerator::GenerateMap()
 {
-	if (!ensureMsgf(IndestrucibleWallClass != nullptr, TEXT("IndestructibleWallClass not set"))) return;
+	//if (!ensureMsgf(IndestrucibleWallClass != nullptr, TEXT("IndestructibleWallClass not set"))) return;
+	if (!ensureMsgf(IndestructibleWallISM, TEXT("IndestructibleWallISM is null"))) return;
 	if (!ensureMsgf(DestructibleWallClass != nullptr, TEXT("DestructibleWallClass not set"))) return;
 	if (!ensureMsgf(DestructibleWallClass != nullptr, TEXT("EnemyClass not set"))) return;
 
@@ -148,7 +157,9 @@ void AMapGenerator::GenerateMap()
 			{
 				case ETileType::ETT_IndestructibleWall:
 				{
-					World->SpawnActor<AActor>(IndestrucibleWallClass, SpawnLocation, FRotator(0.f));
+					//World->SpawnActor<AActor>(IndestrucibleWallClass, SpawnLocation, FRotator(0.f));
+					//FTransform SpawnTransform = );
+					IndestructibleWallISM->AddInstance(FTransform(FRotator::ZeroRotator, SpawnLocation, FVector(25, 25, 25)));
 					break;
 				}
 				case ETileType::ETT_DestructibleWall: 
