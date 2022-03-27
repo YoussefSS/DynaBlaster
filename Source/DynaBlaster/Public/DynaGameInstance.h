@@ -19,12 +19,15 @@ public:
 
 	FORCEINLINE void SetNumRows(int32 NewNumRows) { NumRows = NewNumRows; }
 	FORCEINLINE void SetNumColumns(int32 NewNumColumns) { NumColumns = NewNumColumns; }
+	FORCEINLINE void SetNumEnemies(int32 NewNumEnemies) { NumEnemies = NewNumEnemies; }
 
 	FORCEINLINE int32 GetNumRows() { return NumRows; }
 	FORCEINLINE int32 GetNumColumns() { return NumColumns; }
+	FORCEINLINE int32 GetNumEnemies() { return NumEnemies; }
 
 private:
 
 	int32 NumRows = 11;
-	int32 NumColumns = 11;
+	int32 NumColumns = 13;
+	int32 NumEnemies = 3;
 };

@@ -34,7 +34,7 @@ void AMapGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	InitializeRowsAndColumns();
+	InitializeValuesFromGameInstance();
 
 	InitializeVirtualMap();
 
@@ -239,7 +239,7 @@ void AMapGenerator::InitializeCameraPosition()
 	FVector MapEnd = FVector(GetNumRows() * TileWorldSize, GetNumColumns() * TileWorldSize, GetActorLocation().Z);
 	FVector MidPoint = (MapStart + MapEnd) / 2;
 	float MapDistance = FVector::Dist(MapStart, MapEnd);
-	MidPoint.Z = MapDistance*0.85;
+	MidPoint.Z = MapDistance*CameraZOffsetMultiplier + CameraZConstantOffset;
 	
 	for (TActorIterator<ATopDownCamera> CameraItr(World); CameraItr; ++CameraItr)
 	{
@@ -295,7 +295,7 @@ void AMapGenerator::ShuffleArray(TArray<FVector2D>& OutArr)
 	}
 }
 
-void AMapGenerator::InitializeRowsAndColumns()
+void AMapGenerator::InitializeValuesFromGameInstance()
 {
 	UDynaGameInstance* GI = Cast<UDynaGameInstance>(UGameplayStatics::GetGameInstance(this));
 
@@ -303,6 +303,7 @@ void AMapGenerator::InitializeRowsAndColumns()
 	{
 		Rows = GI->GetNumRows();
 		Columns = GI->GetNumColumns();
+		EnemyCount = GI->GetNumEnemies();
 	}
 }
 

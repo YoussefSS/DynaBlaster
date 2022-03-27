@@ -27,8 +27,10 @@ bool UMainMenu::Initialize()
 
 	if (!RowSlider) return false;
 	if (!ColumnSlider) return false;
+	if (!EnemySlider) return false;
 	if (!RowText) return false;
 	if (!ColumnText) return false;
+	if (!EnemyText) return false;
 
 	StartButton->OnClicked.AddDynamic(this, &UMainMenu::StartButtonClicked);
 	OptionsButton->OnClicked.AddDynamic(this, &UMainMenu::OptionsButtonClicked);
@@ -37,6 +39,7 @@ bool UMainMenu::Initialize()
 
 	RowSlider->OnValueChanged.AddDynamic(this, &UMainMenu::RowSliderChanged);
 	ColumnSlider->OnValueChanged.AddDynamic(this, &UMainMenu::ColumnSliderChanged);
+	EnemySlider->OnValueChanged.AddDynamic(this, &UMainMenu::EnemySliderChanged);
 	return true;
 }
 
@@ -61,6 +64,20 @@ void UMainMenu::InitializeOptionValues()
 	{
 		ColumnSlider->SetValue(GetDynaGameInstance()->GetNumColumns());
 		ColumnText->SetText(FText::FromString(FString::FromInt(GetDynaGameInstance()->GetNumColumns())));
+	}
+}
+
+void UMainMenu::UpdateEnemySliderMax()
+{
+	if (EnemySlider && RowSlider && ColumnSlider)
+	{
+		int32 MaxNum = FMath::Max(RowSlider->GetValue(), ColumnSlider->GetValue());
+		int32 TempVal = EnemySlider->GetValue();
+		EnemySlider->SetMaxValue(MaxNum);
+
+		int32 NewVal = TempVal < MaxNum ? TempVal : MaxNum;
+		EnemySlider->SetValue(NewVal);
+		EnemySliderChanged(NewVal);
 	}
 }
 
@@ -100,6 +117,8 @@ void UMainMenu::RowSliderChanged(float NewVal)
 	{
 		RowText->SetText(FText::FromString(FString::FromInt(NewVal)));
 	}
+
+	UpdateEnemySliderMax();
 }
 
 void UMainMenu::ColumnSliderChanged(float NewVal)
@@ -112,6 +131,23 @@ void UMainMenu::ColumnSliderChanged(float NewVal)
 	{
 		ColumnText->SetText(FText::FromString(FString::FromInt(NewVal)));
 	}
+
+	UpdateEnemySliderMax();
+}
+
+void UMainMenu::EnemySliderChanged(float NewVal)
+{
+	if (!GetDynaGameInstance()) return;
+
+	GetDynaGameInstance()->SetNumEnemies(NewVal);
+
+	if (EnemyText)
+	{
+		EnemyText->SetText(FText::FromString(FString::FromInt(NewVal)));
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("enemyslider"));
+
 }
 
 UDynaGameInstance* UMainMenu::GetDynaGameInstance()

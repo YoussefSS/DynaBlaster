@@ -97,6 +97,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation| Settings")
 	int32 FloorSpawnZOffset = 10;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0"), Category = "Map Generation| Settings")
+	float CameraZOffsetMultiplier = 0.85;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation| Settings")
+	float CameraZConstantOffset = 10;
+
 	/** 0 means will never spawn, 1 means will always spawn */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Map Generation| Probability", meta = (ClampMin = "0", ClampMax = "1"))
 	float DestructibleWallSpawnChance = 0.5;
@@ -114,5 +120,5 @@ private:
 
 	void ShuffleArray(TArray<FVector2D>& OutArr);
 
-	void InitializeRowsAndColumns();
+	void InitializeValuesFromGameInstance();
 };

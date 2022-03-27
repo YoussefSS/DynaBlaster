@@ -50,16 +50,24 @@ public:
 	USlider* ColumnSlider;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget), Category = "MainMenu|OptionsMenu")
+	USlider* EnemySlider;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget), Category = "MainMenu|OptionsMenu")
 	class UTextBlock* RowText;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget), Category = "MainMenu|OptionsMenu")
 	UTextBlock* ColumnText;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget), Category = "MainMenu|OptionsMenu")
+	UTextBlock* EnemyText;
 
 protected:
 
 	virtual void NativeOnInitialized() override;
 
 	void InitializeOptionValues();
+
+	void UpdateEnemySliderMax();
 
 protected:
 	UFUNCTION()
@@ -79,6 +87,9 @@ protected:
 
 	UFUNCTION()
 	void ColumnSliderChanged(float NewVal);
+
+	UFUNCTION()
+	void EnemySliderChanged(float NewVal);
 
 private:
 
