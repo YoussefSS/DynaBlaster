@@ -93,15 +93,9 @@ void ABomb::ExplodeOnAxis(FVector AxisToTraceOn)
 	}
 	else
 	{
-		if (!bIsUpgraded)
-		{
-			SpawnBombTraceAt(TraceEndRegular);
-		}
-		else
-		{
-			SpawnBombTraceAt(TraceEndRegular);
+		SpawnBombTraceAt(TraceEndRegular);
+		if (bIsUpgraded)
 			SpawnBombTraceAt(TraceEndUpgraded);
-		}
 			
 	}
 

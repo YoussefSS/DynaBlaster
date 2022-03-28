@@ -56,7 +56,9 @@ private:
 	int32 AliveEnemyCount = 0;
 
 private: /** Score / Saving */
+
 	int32 CurrentScore = 0;
+
 	int32 Highscore = 0;
 
 public:

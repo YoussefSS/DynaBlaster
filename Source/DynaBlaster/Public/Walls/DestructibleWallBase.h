@@ -39,6 +39,7 @@ public:
 	virtual void DestroyHelper() override;
 
 	void SetIsUpgradeWall(bool NewVal) { bIsUpgradeWall = NewVal; }
+
 	void SetIsGoalWall(bool NewVal) { bIsGoalWall = NewVal; }
 
 	void EnablePulseMaterial();
@@ -52,6 +53,7 @@ protected:
 	float TimeToDestroy = 1.2;
 
 	bool bIsUpgradeWall = false;
+
 	bool bIsGoalWall = false;
 
 };
